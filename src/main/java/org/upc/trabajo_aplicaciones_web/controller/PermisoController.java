@@ -57,4 +57,5 @@ public class PermisoController {
         List<PermisoDTO> permisos = permisoService.obtenerPermisosPorRol(rolId);
         return ResponseEntity.ok(permisos);
     }
+    //mejorar
 }
