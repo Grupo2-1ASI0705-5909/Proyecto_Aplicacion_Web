@@ -29,6 +29,4 @@ public class UsuarioDTO {
         this.telefono = telefono;
     }
 
-    //dtousuarios
-
 }

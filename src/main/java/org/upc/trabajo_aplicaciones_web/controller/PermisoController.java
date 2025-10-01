@@ -39,7 +39,7 @@ public class PermisoController {
         PermisoDTO permisoActualizado = permisoService.actualizar(id, permisoDTO);
         return ResponseEntity.ok(permisoActualizado);
     }
-
+    //nota
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         permisoService.eliminar(id);
