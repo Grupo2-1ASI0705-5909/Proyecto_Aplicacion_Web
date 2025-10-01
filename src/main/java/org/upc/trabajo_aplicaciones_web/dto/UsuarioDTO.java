@@ -28,5 +28,7 @@ public class UsuarioDTO {
         this.email = email;
         this.telefono = telefono;
     }
-    //Nota de version 1 de octubre
+
+    //dtousuarios
+
 }
