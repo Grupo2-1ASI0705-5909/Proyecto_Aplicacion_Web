@@ -28,5 +28,6 @@ public class UsuarioDTO {
         this.email = email;
         this.telefono = telefono;
     }
-     //nota nuevo comentario Leonardo
+    // VERSION
+    //Nota de version 1 de octubre
 }

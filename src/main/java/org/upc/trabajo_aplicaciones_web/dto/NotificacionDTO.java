@@ -22,4 +22,6 @@ public class NotificacionDTO {
         this.mensaje = mensaje;
         this.fechaEnvio = LocalDateTime.now();
     }
+    // to bien
+
 }

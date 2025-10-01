@@ -24,4 +24,6 @@ public class    ComercioDTO {
         this.categoria = categoria;
     }
     //Notas
+    // version estable
+
 }
