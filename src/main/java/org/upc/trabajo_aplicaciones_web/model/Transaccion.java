@@ -1,5 +1,6 @@
 package org.upc.trabajo_aplicaciones_web.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -58,6 +59,7 @@ public class Transaccion {
     private String estado;
 
     // RELACIONES
+    @JsonManagedReference
     @OneToMany(mappedBy = "transaccion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlanPago> planesPago = new ArrayList<>();
 }

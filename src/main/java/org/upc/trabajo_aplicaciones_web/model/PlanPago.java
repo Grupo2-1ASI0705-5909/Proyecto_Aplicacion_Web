@@ -1,5 +1,6 @@
 package org.upc.trabajo_aplicaciones_web.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ public class PlanPago {
     @Column(name = "planpagoid")
     private Long planPagoId;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "transaccionid", nullable = false)
     private Transaccion transaccion;

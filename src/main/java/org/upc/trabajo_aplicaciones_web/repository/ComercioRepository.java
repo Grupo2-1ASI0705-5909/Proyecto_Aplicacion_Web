@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.upc.trabajo_aplicaciones_web.model.Comercio;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +39,7 @@ public interface ComercioRepository extends JpaRepository<Comercio, Long> {
     List<Object[]> countByCategoria();
 
     // Buscar comercios con transacciones recientes
-    @Query("SELECT c FROM Comercio c WHERE c.comercioId IN " +
-            "(SELECT t.comercio.comercioId FROM Transaccion t WHERE t.fechaTransaccion >= CURRENT_DATE - 30)")
-    List<Comercio> findConTransaccionesRecientes();
+    @Query("SELECT c FROM Comercio c WHERE c IN " +
+            "(SELECT t.comercio FROM Transaccion t WHERE t.fechaTransaccion >= :fechaLimite)")
+    List<Comercio> findConTransaccionesRecientes(LocalDateTime fechaLimite);
 }
