@@ -28,10 +28,11 @@ public class UsuarioDTO {
         this.email = email;
         this.telefono = telefono;
     }
-    // VERSION 20:55
+    // VERSION
     //Nota de version 1 de octubre
 
-    //Nota prueba David
+    //Nota prueba David0
 
-    //Nota Prueba David 2.0
+    //Nota Prueba David 2.00
+
 }
