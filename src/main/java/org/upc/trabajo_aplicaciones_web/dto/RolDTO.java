@@ -15,7 +15,6 @@ public class RolDTO {
 
     // Para respuestas
     private List<PermisoDTO> permisos = new ArrayList<>();
-    private List<UsuarioDTO> usuarios = new ArrayList<>();
 
     public RolDTO() {}
 

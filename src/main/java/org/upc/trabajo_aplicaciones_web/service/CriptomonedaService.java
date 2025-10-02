@@ -7,43 +7,49 @@ import org.upc.trabajo_aplicaciones_web.dto.CriptomonedaDTO;
 import org.upc.trabajo_aplicaciones_web.model.Criptomoneda;
 import org.upc.trabajo_aplicaciones_web.repository.CriptomonedaRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CriptomonedaService {
-
     private final CriptomonedaRepository criptomonedaRepository;
-    private final ModelMapper modelMapper;
 
     public CriptomonedaDTO crear(CriptomonedaDTO criptomonedaDTO) {
         if (criptomonedaRepository.existsByCodigo(criptomonedaDTO.getCodigo())) {
             throw new RuntimeException("La criptomoneda ya existe");
         }
 
-        Criptomoneda criptomoneda = modelMapper.map(criptomonedaDTO, Criptomoneda.class);
+        Criptomoneda criptomoneda = new Criptomoneda();
+        criptomoneda.setCodigo(criptomonedaDTO.getCodigo());
+        criptomoneda.setNombre(criptomonedaDTO.getNombre());
+        criptomoneda.setDecimales(criptomonedaDTO.getDecimales() != null ? criptomonedaDTO.getDecimales() : 8);
+        criptomoneda.setActiva(criptomonedaDTO.getActiva() != null ? criptomonedaDTO.getActiva() : true);
+
         criptomoneda = criptomonedaRepository.save(criptomoneda);
-        return modelMapper.map(criptomoneda, CriptomonedaDTO.class);
+        return convertirACriptomonedaDTO(criptomoneda);
     }
 
     public List<CriptomonedaDTO> obtenerTodos() {
-        return criptomonedaRepository.findAll()
-                .stream()
-                .map(cripto -> modelMapper.map(cripto, CriptomonedaDTO.class))
-                .collect(Collectors.toList());
+        List<Criptomoneda> criptomonedas = criptomonedaRepository.findAll();
+        List<CriptomonedaDTO> criptomonedaDTOs = new ArrayList<>();
+        for (Criptomoneda cripto : criptomonedas) {
+            criptomonedaDTOs.add(convertirACriptomonedaDTO(cripto));
+        }
+        return criptomonedaDTOs;
     }
 
     public CriptomonedaDTO obtenerPorId(Long id) {
         Criptomoneda criptomoneda = criptomonedaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Criptomoneda no encontrada"));
-        return modelMapper.map(criptomoneda, CriptomonedaDTO.class);
+        return convertirACriptomonedaDTO(criptomoneda);
     }
 
     public CriptomonedaDTO obtenerPorCodigo(String codigo) {
         Criptomoneda criptomoneda = criptomonedaRepository.findByCodigo(codigo)
                 .orElseThrow(() -> new RuntimeException("Criptomoneda no encontrada"));
-        return modelMapper.map(criptomoneda, CriptomonedaDTO.class);
+        return convertirACriptomonedaDTO(criptomoneda);
     }
 
     public CriptomonedaDTO actualizar(Long id, CriptomonedaDTO criptomonedaDTO) {
@@ -55,7 +61,7 @@ public class CriptomonedaService {
         criptoExistente.setActiva(criptomonedaDTO.getActiva());
 
         criptoExistente = criptomonedaRepository.save(criptoExistente);
-        return modelMapper.map(criptoExistente, CriptomonedaDTO.class);
+        return convertirACriptomonedaDTO(criptoExistente);
     }
 
     public void eliminar(Long id) {
@@ -66,17 +72,21 @@ public class CriptomonedaService {
     }
 
     public List<CriptomonedaDTO> obtenerActivas() {
-        return criptomonedaRepository.findByActivaTrue()
-                .stream()
-                .map(cripto -> modelMapper.map(cripto, CriptomonedaDTO.class))
-                .collect(Collectors.toList());
+        List<Criptomoneda> criptomonedas = criptomonedaRepository.findByActivaTrue();
+        List<CriptomonedaDTO> criptomonedaDTOs = new ArrayList<>();
+        for (Criptomoneda cripto : criptomonedas) {
+            criptomonedaDTOs.add(convertirACriptomonedaDTO(cripto));
+        }
+        return criptomonedaDTOs;
     }
 
     public List<CriptomonedaDTO> buscarPorNombre(String nombre) {
-        return criptomonedaRepository.findByNombreContainingIgnoreCase(nombre)
-                .stream()
-                .map(cripto -> modelMapper.map(cripto, CriptomonedaDTO.class))
-                .collect(Collectors.toList());
+        List<Criptomoneda> criptomonedas = criptomonedaRepository.findByNombreContainingIgnoreCase(nombre);
+        List<CriptomonedaDTO> criptomonedaDTOs = new ArrayList<>();
+        for (Criptomoneda cripto : criptomonedas) {
+            criptomonedaDTOs.add(convertirACriptomonedaDTO(cripto));
+        }
+        return criptomonedaDTOs;
     }
 
     public CriptomonedaDTO cambiarEstado(Long id, Boolean activa) {
@@ -84,6 +94,16 @@ public class CriptomonedaService {
                 .orElseThrow(() -> new RuntimeException("Criptomoneda no encontrada"));
         criptomoneda.setActiva(activa);
         criptomoneda = criptomonedaRepository.save(criptomoneda);
-        return modelMapper.map(criptomoneda, CriptomonedaDTO.class);
+        return convertirACriptomonedaDTO(criptomoneda);
+    }
+
+    private CriptomonedaDTO convertirACriptomonedaDTO(Criptomoneda criptomoneda) {
+        CriptomonedaDTO dto = new CriptomonedaDTO();
+        dto.setCriptoId(criptomoneda.getCriptoId());
+        dto.setCodigo(criptomoneda.getCodigo());
+        dto.setNombre(criptomoneda.getNombre());
+        dto.setDecimales(criptomoneda.getDecimales());
+        dto.setActiva(criptomoneda.getActiva());
+        return dto;
     }
 }

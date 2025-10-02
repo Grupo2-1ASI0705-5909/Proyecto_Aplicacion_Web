@@ -9,16 +9,15 @@ import org.upc.trabajo_aplicaciones_web.model.Usuario;
 import org.upc.trabajo_aplicaciones_web.repository.ComercioRepository;
 import org.upc.trabajo_aplicaciones_web.repository.UsuarioRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ComercioService {
-
     private final ComercioRepository comercioRepository;
     private final UsuarioRepository usuarioRepository;
-    private final ModelMapper modelMapper;
 
     public ComercioDTO crear(ComercioDTO comercioDTO) {
         if (comercioRepository.existsByRuc(comercioDTO.getRuc())) {
@@ -28,30 +27,37 @@ public class ComercioService {
         Usuario usuario = usuarioRepository.findById(comercioDTO.getUsuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Comercio comercio = modelMapper.map(comercioDTO, Comercio.class);
+        Comercio comercio = new Comercio();
         comercio.setUsuario(usuario);
+        comercio.setNombreComercial(comercioDTO.getNombreComercial());
+        comercio.setRuc(comercioDTO.getRuc());
+        comercio.setDireccion(comercioDTO.getDireccion());
+        comercio.setCategoria(comercioDTO.getCategoria());
+        comercio.setEstado(comercioDTO.getEstado() != null ? comercioDTO.getEstado() : true);
 
         comercio = comercioRepository.save(comercio);
-        return modelMapper.map(comercio, ComercioDTO.class);
+        return convertirAComercioDTO(comercio);
     }
 
     public List<ComercioDTO> obtenerTodos() {
-        return comercioRepository.findAll()
-                .stream()
-                .map(comercio -> modelMapper.map(comercio, ComercioDTO.class))
-                .collect(Collectors.toList());
+        List<Comercio> comercios = comercioRepository.findAll();
+        List<ComercioDTO> comercioDTOs = new ArrayList<>();
+        for (Comercio comercio : comercios) {
+            comercioDTOs.add(convertirAComercioDTO(comercio));
+        }
+        return comercioDTOs;
     }
 
     public ComercioDTO obtenerPorId(Long id) {
         Comercio comercio = comercioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comercio no encontrado"));
-        return modelMapper.map(comercio, ComercioDTO.class);
+        return convertirAComercioDTO(comercio);
     }
 
     public ComercioDTO obtenerPorRuc(String ruc) {
         Comercio comercio = comercioRepository.findByRuc(ruc)
                 .orElseThrow(() -> new RuntimeException("Comercio no encontrado"));
-        return modelMapper.map(comercio, ComercioDTO.class);
+        return convertirAComercioDTO(comercio);
     }
 
     public ComercioDTO actualizar(Long id, ComercioDTO comercioDTO) {
@@ -65,7 +71,7 @@ public class ComercioService {
         comercioExistente.setEstado(comercioDTO.getEstado());
 
         comercioExistente = comercioRepository.save(comercioExistente);
-        return modelMapper.map(comercioExistente, ComercioDTO.class);
+        return convertirAComercioDTO(comercioExistente);
     }
 
     public void eliminar(Long id) {
@@ -80,34 +86,55 @@ public class ComercioService {
                 .orElseThrow(() -> new RuntimeException("Comercio no encontrado"));
         comercio.setEstado(estado);
         comercio = comercioRepository.save(comercio);
-        return modelMapper.map(comercio, ComercioDTO.class);
+        return convertirAComercioDTO(comercio);
     }
 
     public List<ComercioDTO> obtenerPorUsuario(Long usuarioId) {
-        return comercioRepository.findByUsuarioUsuarioId(usuarioId)
-                .stream()
-                .map(comercio -> modelMapper.map(comercio, ComercioDTO.class))
-                .collect(Collectors.toList());
+        List<Comercio> comercios = comercioRepository.findByUsuarioUsuarioId(usuarioId);
+        List<ComercioDTO> comercioDTOs = new ArrayList<>();
+        for (Comercio comercio : comercios) {
+            comercioDTOs.add(convertirAComercioDTO(comercio));
+        }
+        return comercioDTOs;
     }
 
     public List<ComercioDTO> obtenerPorCategoria(String categoria) {
-        return comercioRepository.findByCategoria(categoria)
-                .stream()
-                .map(comercio -> modelMapper.map(comercio, ComercioDTO.class))
-                .collect(Collectors.toList());
+        List<Comercio> comercios = comercioRepository.findByCategoria(categoria);
+        List<ComercioDTO> comercioDTOs = new ArrayList<>();
+        for (Comercio comercio : comercios) {
+            comercioDTOs.add(convertirAComercioDTO(comercio));
+        }
+        return comercioDTOs;
     }
 
     public List<ComercioDTO> buscarPorNombre(String nombre) {
-        return comercioRepository.findByNombreComercialContainingIgnoreCase(nombre)
-                .stream()
-                .map(comercio -> modelMapper.map(comercio, ComercioDTO.class))
-                .collect(Collectors.toList());
+        List<Comercio> comercios = comercioRepository.findByNombreComercialContainingIgnoreCase(nombre);
+        List<ComercioDTO> comercioDTOs = new ArrayList<>();
+        for (Comercio comercio : comercios) {
+            comercioDTOs.add(convertirAComercioDTO(comercio));
+        }
+        return comercioDTOs;
     }
 
     public List<ComercioDTO> obtenerActivos() {
-        return comercioRepository.findByEstado(true)
-                .stream()
-                .map(comercio -> modelMapper.map(comercio, ComercioDTO.class))
-                .collect(Collectors.toList());
+        List<Comercio> comercios = comercioRepository.findByEstado(true);
+        List<ComercioDTO> comercioDTOs = new ArrayList<>();
+        for (Comercio comercio : comercios) {
+            comercioDTOs.add(convertirAComercioDTO(comercio));
+        }
+        return comercioDTOs;
+    }
+
+    private ComercioDTO convertirAComercioDTO(Comercio comercio) {
+        ComercioDTO dto = new ComercioDTO();
+        dto.setComercioId(comercio.getComercioId());
+        dto.setUsuarioId(comercio.getUsuario().getUsuarioId());
+        dto.setNombreComercial(comercio.getNombreComercial());
+        dto.setRuc(comercio.getRuc());
+        dto.setDireccion(comercio.getDireccion());
+        dto.setCategoria(comercio.getCategoria());
+        dto.setEstado(comercio.getEstado());
+        dto.setCreatedAt(comercio.getCreatedAt());
+        return dto;
     }
 }

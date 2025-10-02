@@ -15,7 +15,6 @@ public class ComercioDTO {
     private LocalDateTime createdAt;
 
     // Para respuestas
-    private UsuarioDTO usuario;
 
     public ComercioDTO() {}
 

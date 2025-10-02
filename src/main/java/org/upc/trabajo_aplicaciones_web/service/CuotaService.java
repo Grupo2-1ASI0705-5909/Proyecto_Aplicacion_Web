@@ -10,52 +10,45 @@ import org.upc.trabajo_aplicaciones_web.repository.CuotaRepository;
 import org.upc.trabajo_aplicaciones_web.repository.PlanPagoRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CuotaService {
-
     private final CuotaRepository cuotaRepository;
     private final PlanPagoRepository planPagoRepository;
-    private final ModelMapper modelMapper;
 
     public CuotaDTO crear(CuotaDTO cuotaDTO) {
         PlanPago planPago = planPagoRepository.findById(cuotaDTO.getPlanPagoId())
                 .orElseThrow(() -> new RuntimeException("Plan de pago no encontrado"));
 
-        Cuota cuota = modelMapper.map(cuotaDTO, Cuota.class);
+        Cuota cuota = new Cuota();
         cuota.setPlanPago(planPago);
+        cuota.setNumeroCuota(cuotaDTO.getNumeroCuota());
+        cuota.setMonto(cuotaDTO.getMonto());
+        cuota.setFechaVencimiento(cuotaDTO.getFechaVencimiento());
+        cuota.setFechaPago(cuotaDTO.getFechaPago());
+        cuota.setEstado(cuotaDTO.getEstado() != null ? cuotaDTO.getEstado() : "PENDIENTE");
 
         cuota = cuotaRepository.save(cuota);
-
-        // Calcular si está vencida
-        CuotaDTO respuesta = modelMapper.map(cuota, CuotaDTO.class);
-        respuesta.setVencida(cuota.estaVencida());
-
-        return respuesta;
+        return convertirACuotaDTO(cuota);
     }
 
     public List<CuotaDTO> obtenerTodos() {
-        return cuotaRepository.findAll()
-                .stream()
-                .map(cuota -> {
-                    CuotaDTO dto = modelMapper.map(cuota, CuotaDTO.class);
-                    dto.setVencida(cuota.estaVencida());
-                    return dto;
-                })
-                .collect(Collectors.toList());
+        List<Cuota> cuotas = cuotaRepository.findAll();
+        List<CuotaDTO> cuotaDTOs = new ArrayList<>();
+        for (Cuota cuota : cuotas) {
+            cuotaDTOs.add(convertirACuotaDTO(cuota));
+        }
+        return cuotaDTOs;
     }
 
     public CuotaDTO obtenerPorId(Long id) {
         Cuota cuota = cuotaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cuota no encontrada"));
-
-        CuotaDTO dto = modelMapper.map(cuota, CuotaDTO.class);
-        dto.setVencida(cuota.estaVencida());
-
-        return dto;
+        return convertirACuotaDTO(cuota);
     }
 
     public CuotaDTO actualizar(Long id, CuotaDTO cuotaDTO) {
@@ -68,11 +61,7 @@ public class CuotaService {
         cuotaExistente.setEstado(cuotaDTO.getEstado());
 
         cuotaExistente = cuotaRepository.save(cuotaExistente);
-
-        CuotaDTO respuesta = modelMapper.map(cuotaExistente, CuotaDTO.class);
-        respuesta.setVencida(cuotaExistente.estaVencida());
-
-        return respuesta;
+        return convertirACuotaDTO(cuotaExistente);
     }
 
     public void eliminar(Long id) {
@@ -88,84 +77,77 @@ public class CuotaService {
 
         cuota.setFechaPago(fechaPago);
         cuota.setEstado("PAGADA");
-
         cuota = cuotaRepository.save(cuota);
-
-        CuotaDTO dto = modelMapper.map(cuota, CuotaDTO.class);
-        dto.setVencida(false); // Ya está pagada, no está vencida
-
-        return dto;
+        return convertirACuotaDTO(cuota);
     }
 
     public List<CuotaDTO> obtenerPorPlanPago(Long planPagoId) {
-        return cuotaRepository.findByPlanPagoPlanPagoId(planPagoId)
-                .stream()
-                .map(cuota -> {
-                    CuotaDTO dto = modelMapper.map(cuota, CuotaDTO.class);
-                    dto.setVencida(cuota.estaVencida());
-                    return dto;
-                })
-                .collect(Collectors.toList());
+        List<Cuota> cuotas = cuotaRepository.findByPlanPagoPlanPagoId(planPagoId);
+        List<CuotaDTO> cuotaDTOs = new ArrayList<>();
+        for (Cuota cuota : cuotas) {
+            cuotaDTOs.add(convertirACuotaDTO(cuota));
+        }
+        return cuotaDTOs;
     }
 
     public List<CuotaDTO> obtenerPorEstado(String estado) {
-        return cuotaRepository.findByEstado(estado)
-                .stream()
-                .map(cuota -> {
-                    CuotaDTO dto = modelMapper.map(cuota, CuotaDTO.class);
-                    dto.setVencida(cuota.estaVencida());
-                    return dto;
-                })
-                .collect(Collectors.toList());
+        List<Cuota> cuotas = cuotaRepository.findByEstado(estado);
+        List<CuotaDTO> cuotaDTOs = new ArrayList<>();
+        for (Cuota cuota : cuotas) {
+            cuotaDTOs.add(convertirACuotaDTO(cuota));
+        }
+        return cuotaDTOs;
     }
 
     public List<CuotaDTO> obtenerCuotasVencidas() {
-        return cuotaRepository.findCuotasVencidas(LocalDate.now())
-                .stream()
-                .map(cuota -> {
-                    CuotaDTO dto = modelMapper.map(cuota, CuotaDTO.class);
-                    dto.setVencida(true); // Siempre true para cuotas vencidas
-                    return dto;
-                })
-                .collect(Collectors.toList());
+        List<Cuota> cuotas = cuotaRepository.findCuotasVencidas(LocalDate.now());
+        List<CuotaDTO> cuotaDTOs = new ArrayList<>();
+        for (Cuota cuota : cuotas) {
+            cuotaDTOs.add(convertirACuotaDTO(cuota));
+        }
+        return cuotaDTOs;
     }
 
     public List<CuotaDTO> obtenerCuotasPorVencer() {
         LocalDate inicio = LocalDate.now();
         LocalDate fin = inicio.plusDays(7);
-
-        return cuotaRepository.findCuotasPorVencer(inicio, fin)
-                .stream()
-                .map(cuota -> {
-                    CuotaDTO dto = modelMapper.map(cuota, CuotaDTO.class);
-                    dto.setVencida(cuota.estaVencida());
-                    return dto;
-                })
-                .collect(Collectors.toList());
+        List<Cuota> cuotas = cuotaRepository.findCuotasPorVencer(inicio, fin);
+        List<CuotaDTO> cuotaDTOs = new ArrayList<>();
+        for (Cuota cuota : cuotas) {
+            cuotaDTOs.add(convertirACuotaDTO(cuota));
+        }
+        return cuotaDTOs;
     }
 
     public List<CuotaDTO> obtenerPorUsuario(Long usuarioId) {
-        return cuotaRepository.findByUsuarioId(usuarioId)
-                .stream()
-                .map(cuota -> {
-                    CuotaDTO dto = modelMapper.map(cuota, CuotaDTO.class);
-                    dto.setVencida(cuota.estaVencida());
-                    return dto;
-                })
-                .collect(Collectors.toList());
+        List<Cuota> cuotas = cuotaRepository.findByUsuarioId(usuarioId);
+        List<CuotaDTO> cuotaDTOs = new ArrayList<>();
+        for (Cuota cuota : cuotas) {
+            cuotaDTOs.add(convertirACuotaDTO(cuota));
+        }
+        return cuotaDTOs;
     }
 
     public CuotaDTO obtenerProximaCuotaPorVencer(Long planPagoId) {
         Cuota cuota = cuotaRepository.findProximaCuotaPorVencer(planPagoId)
                 .orElseThrow(() -> new RuntimeException("No hay cuotas pendientes"));
-
-        CuotaDTO dto = modelMapper.map(cuota, CuotaDTO.class);
-        dto.setVencida(cuota.estaVencida());
-
-        return dto;
+        return convertirACuotaDTO(cuota);
     }
 
     public Double calcularTotalPendientePorPlan(Long planPagoId) {
         return cuotaRepository.calcularTotalPendientePorPlan(planPagoId);
+    }
+
+    private CuotaDTO convertirACuotaDTO(Cuota cuota) {
+        CuotaDTO dto = new CuotaDTO();
+        dto.setCuotaId(cuota.getCuotaId());
+        dto.setPlanPagoId(cuota.getPlanPago().getPlanPagoId());
+        dto.setNumeroCuota(cuota.getNumeroCuota());
+        dto.setMonto(cuota.getMonto());
+        dto.setFechaVencimiento(cuota.getFechaVencimiento());
+        dto.setFechaPago(cuota.getFechaPago());
+        dto.setEstado(cuota.getEstado());
+        dto.setVencida(cuota.estaVencida());
+        return dto;
     }
 }

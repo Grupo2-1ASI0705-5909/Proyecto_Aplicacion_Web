@@ -7,37 +7,41 @@ import org.upc.trabajo_aplicaciones_web.dto.PermisoDTO;
 import org.upc.trabajo_aplicaciones_web.model.Permiso;
 import org.upc.trabajo_aplicaciones_web.repository.PermisoRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PermisoService {
-
     private final PermisoRepository permisoRepository;
-    private final ModelMapper modelMapper;
 
     public PermisoDTO crear(PermisoDTO permisoDTO) {
         if (permisoRepository.existsByNombre(permisoDTO.getNombre())) {
             throw new RuntimeException("El permiso ya existe");
         }
 
-        Permiso permiso = modelMapper.map(permisoDTO, Permiso.class);
+        Permiso permiso = new Permiso();
+        permiso.setNombre(permisoDTO.getNombre());
+        permiso.setDescripcion(permisoDTO.getDescripcion());
+
         permiso = permisoRepository.save(permiso);
-        return modelMapper.map(permiso, PermisoDTO.class);
+        return convertirAPermisoDTO(permiso);
     }
 
     public List<PermisoDTO> obtenerTodos() {
-        return permisoRepository.findAll()
-                .stream()
-                .map(permiso -> modelMapper.map(permiso, PermisoDTO.class))
-                .collect(Collectors.toList());
+        List<Permiso> permisos = permisoRepository.findAll();
+        List<PermisoDTO> permisoDTOs = new ArrayList<>();
+        for (Permiso permiso : permisos) {
+            permisoDTOs.add(convertirAPermisoDTO(permiso));
+        }
+        return permisoDTOs;
     }
 
     public PermisoDTO obtenerPorId(Long id) {
         Permiso permiso = permisoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Permiso no encontrado"));
-        return modelMapper.map(permiso, PermisoDTO.class);
+        return convertirAPermisoDTO(permiso);
     }
 
     public PermisoDTO actualizar(Long id, PermisoDTO permisoDTO) {
@@ -48,7 +52,7 @@ public class PermisoService {
         permisoExistente.setDescripcion(permisoDTO.getDescripcion());
 
         permisoExistente = permisoRepository.save(permisoExistente);
-        return modelMapper.map(permisoExistente, PermisoDTO.class);
+        return convertirAPermisoDTO(permisoExistente);
     }
 
     public void eliminar(Long id) {
@@ -59,16 +63,28 @@ public class PermisoService {
     }
 
     public List<PermisoDTO> buscarPorNombre(String nombre) {
-        return permisoRepository.findByNombreContainingIgnoreCase(nombre)
-                .stream()
-                .map(permiso -> modelMapper.map(permiso, PermisoDTO.class))
-                .collect(Collectors.toList());
+        List<Permiso> permisos = permisoRepository.findByNombreContainingIgnoreCase(nombre);
+        List<PermisoDTO> permisoDTOs = new ArrayList<>();
+        for (Permiso permiso : permisos) {
+            permisoDTOs.add(convertirAPermisoDTO(permiso));
+        }
+        return permisoDTOs;
     }
 
     public List<PermisoDTO> obtenerPermisosPorRol(Long rolId) {
-        return permisoRepository.findByRolId(rolId)
-                .stream()
-                .map(permiso -> modelMapper.map(permiso, PermisoDTO.class))
-                .collect(Collectors.toList());
+        List<Permiso> permisos = permisoRepository.findByRolId(rolId);
+        List<PermisoDTO> permisoDTOs = new ArrayList<>();
+        for (Permiso permiso : permisos) {
+            permisoDTOs.add(convertirAPermisoDTO(permiso));
+        }
+        return permisoDTOs;
+    }
+
+    private PermisoDTO convertirAPermisoDTO(Permiso permiso) {
+        PermisoDTO dto = new PermisoDTO();
+        dto.setPermisoId(permiso.getPermisoId());
+        dto.setNombre(permiso.getNombre());
+        dto.setDescripcion(permiso.getDescripcion());
+        return dto;
     }
 }

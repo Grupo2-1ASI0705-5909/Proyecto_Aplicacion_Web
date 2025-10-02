@@ -8,20 +8,19 @@ import org.upc.trabajo_aplicaciones_web.model.*;
 import org.upc.trabajo_aplicaciones_web.repository.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TransaccionService {
-
     private final TransaccionRepository transaccionRepository;
     private final UsuarioRepository usuarioRepository;
     private final ComercioRepository comercioRepository;
     private final MetodoPagoRepository metodoPagoRepository;
     private final CriptomonedaRepository criptomonedaRepository;
     private final TipoCambioRepository tipoCambioRepository;
-    private final ModelMapper modelMapper;
 
     public TransaccionDTO crear(TransaccionDTO transaccionDTO) {
         Usuario usuario = usuarioRepository.findById(transaccionDTO.getUsuarioId())
@@ -33,42 +32,45 @@ public class TransaccionService {
         MetodoPago metodoPago = metodoPagoRepository.findById(transaccionDTO.getMetodoPagoId())
                 .orElseThrow(() -> new RuntimeException("Método de pago no encontrado"));
 
-        Transaccion transaccion = modelMapper.map(transaccionDTO, Transaccion.class);
+        Transaccion transaccion = new Transaccion();
         transaccion.setUsuario(usuario);
         transaccion.setComercio(comercio);
         transaccion.setMetodoPago(metodoPago);
+        transaccion.setMontoTotalFiat(transaccionDTO.getMontoTotalFiat());
+        transaccion.setMontoTotalCripto(transaccionDTO.getMontoTotalCripto());
+        transaccion.setTasaAplicada(transaccionDTO.getTasaAplicada());
+        transaccion.setTxHash(transaccionDTO.getTxHash());
+        transaccion.setEstado(transaccionDTO.getEstado() != null ? transaccionDTO.getEstado() : "PENDIENTE");
 
-        // Asignar criptomoneda si se proporciona
         if (transaccionDTO.getCriptoId() != null) {
             Criptomoneda criptomoneda = criptomonedaRepository.findById(transaccionDTO.getCriptoId())
                     .orElseThrow(() -> new RuntimeException("Criptomoneda no encontrada"));
             transaccion.setCriptomoneda(criptomoneda);
         }
 
-        // Asignar tipo de cambio si se proporciona
         if (transaccionDTO.getTipoCambioId() != null) {
             TipoCambio tipoCambio = tipoCambioRepository.findById(transaccionDTO.getTipoCambioId())
                     .orElseThrow(() -> new RuntimeException("Tipo de cambio no encontrado"));
             transaccion.setTipoCambio(tipoCambio);
         }
 
-        transaccion.setFechaTransaccion(LocalDateTime.now());
-
         transaccion = transaccionRepository.save(transaccion);
-        return modelMapper.map(transaccion, TransaccionDTO.class);
+        return convertirATransaccionDTO(transaccion);
     }
 
     public List<TransaccionDTO> obtenerTodos() {
-        return transaccionRepository.findAll()
-                .stream()
-                .map(transaccion -> modelMapper.map(transaccion, TransaccionDTO.class))
-                .collect(Collectors.toList());
+        List<Transaccion> transacciones = transaccionRepository.findAll();
+        List<TransaccionDTO> transaccionDTOs = new ArrayList<>();
+        for (Transaccion transaccion : transacciones) {
+            transaccionDTOs.add(convertirATransaccionDTO(transaccion));
+        }
+        return transaccionDTOs;
     }
 
     public TransaccionDTO obtenerPorId(Long id) {
         Transaccion transaccion = transaccionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transacción no encontrada"));
-        return modelMapper.map(transaccion, TransaccionDTO.class);
+        return convertirATransaccionDTO(transaccion);
     }
 
     public TransaccionDTO actualizar(Long id, TransaccionDTO transaccionDTO) {
@@ -81,7 +83,7 @@ public class TransaccionService {
         transaccionExistente.setTxHash(transaccionDTO.getTxHash());
 
         transaccionExistente = transaccionRepository.save(transaccionExistente);
-        return modelMapper.map(transaccionExistente, TransaccionDTO.class);
+        return convertirATransaccionDTO(transaccionExistente);
     }
 
     public void eliminar(Long id) {
@@ -96,35 +98,43 @@ public class TransaccionService {
                 .orElseThrow(() -> new RuntimeException("Transacción no encontrada"));
         transaccion.setEstado(estado);
         transaccion = transaccionRepository.save(transaccion);
-        return modelMapper.map(transaccion, TransaccionDTO.class);
+        return convertirATransaccionDTO(transaccion);
     }
 
     public List<TransaccionDTO> obtenerPorUsuario(Long usuarioId) {
-        return transaccionRepository.findByUsuarioUsuarioId(usuarioId)
-                .stream()
-                .map(transaccion -> modelMapper.map(transaccion, TransaccionDTO.class))
-                .collect(Collectors.toList());
+        List<Transaccion> transacciones = transaccionRepository.findByUsuarioUsuarioId(usuarioId);
+        List<TransaccionDTO> transaccionDTOs = new ArrayList<>();
+        for (Transaccion transaccion : transacciones) {
+            transaccionDTOs.add(convertirATransaccionDTO(transaccion));
+        }
+        return transaccionDTOs;
     }
 
     public List<TransaccionDTO> obtenerPorComercio(Long comercioId) {
-        return transaccionRepository.findByComercioComercioId(comercioId)
-                .stream()
-                .map(transaccion -> modelMapper.map(transaccion, TransaccionDTO.class))
-                .collect(Collectors.toList());
+        List<Transaccion> transacciones = transaccionRepository.findByComercioComercioId(comercioId);
+        List<TransaccionDTO> transaccionDTOs = new ArrayList<>();
+        for (Transaccion transaccion : transacciones) {
+            transaccionDTOs.add(convertirATransaccionDTO(transaccion));
+        }
+        return transaccionDTOs;
     }
 
     public List<TransaccionDTO> obtenerPorEstado(String estado) {
-        return transaccionRepository.findByEstado(estado)
-                .stream()
-                .map(transaccion -> modelMapper.map(transaccion, TransaccionDTO.class))
-                .collect(Collectors.toList());
+        List<Transaccion> transacciones = transaccionRepository.findByEstado(estado);
+        List<TransaccionDTO> transaccionDTOs = new ArrayList<>();
+        for (Transaccion transaccion : transacciones) {
+            transaccionDTOs.add(convertirATransaccionDTO(transaccion));
+        }
+        return transaccionDTOs;
     }
 
     public List<TransaccionDTO> obtenerTransaccionesConCripto() {
-        return transaccionRepository.findTransaccionesConCripto()
-                .stream()
-                .map(transaccion -> modelMapper.map(transaccion, TransaccionDTO.class))
-                .collect(Collectors.toList());
+        List<Transaccion> transacciones = transaccionRepository.findTransaccionesConCripto();
+        List<TransaccionDTO> transaccionDTOs = new ArrayList<>();
+        for (Transaccion transaccion : transacciones) {
+            transaccionDTOs.add(convertirATransaccionDTO(transaccion));
+        }
+        return transaccionDTOs;
     }
 
     public Double calcularTotalFiatPorUsuario(Long usuarioId) {
@@ -137,9 +147,34 @@ public class TransaccionService {
 
     public List<TransaccionDTO> obtenerRecientes() {
         LocalDateTime fechaLimite = LocalDateTime.now().minusDays(30);
-        return transaccionRepository.findTransaccionesRecientes(fechaLimite)
-                .stream()
-                .map(transaccion -> modelMapper.map(transaccion, TransaccionDTO.class))
-                .collect(Collectors.toList());
+        List<Transaccion> transacciones = transaccionRepository.findTransaccionesRecientes(fechaLimite);
+        List<TransaccionDTO> transaccionDTOs = new ArrayList<>();
+        for (Transaccion transaccion : transacciones) {
+            transaccionDTOs.add(convertirATransaccionDTO(transaccion));
+        }
+        return transaccionDTOs;
+    }
+
+    private TransaccionDTO convertirATransaccionDTO(Transaccion transaccion) {
+        TransaccionDTO dto = new TransaccionDTO();
+        dto.setTransaccionId(transaccion.getTransaccionId());
+        dto.setUsuarioId(transaccion.getUsuario().getUsuarioId());
+        dto.setComercioId(transaccion.getComercio().getComercioId());
+        dto.setMetodoPagoId(transaccion.getMetodoPago().getMetodoPagoId());
+        dto.setMontoTotalFiat(transaccion.getMontoTotalFiat());
+        dto.setMontoTotalCripto(transaccion.getMontoTotalCripto());
+        dto.setTasaAplicada(transaccion.getTasaAplicada());
+        dto.setTxHash(transaccion.getTxHash());
+        dto.setEstado(transaccion.getEstado());
+        dto.setFechaTransaccion(transaccion.getFechaTransaccion());
+
+        if (transaccion.getCriptomoneda() != null) {
+            dto.setCriptoId(transaccion.getCriptomoneda().getCriptoId());
+        }
+        if (transaccion.getTipoCambio() != null) {
+            dto.setTipoCambioId(transaccion.getTipoCambio().getTipoCambioId());
+        }
+
+        return dto;
     }
 }

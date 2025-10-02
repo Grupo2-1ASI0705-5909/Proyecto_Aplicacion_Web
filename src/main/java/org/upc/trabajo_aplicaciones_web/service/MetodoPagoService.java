@@ -7,37 +7,42 @@ import org.upc.trabajo_aplicaciones_web.dto.MetodoPagoDTO;
 import org.upc.trabajo_aplicaciones_web.model.MetodoPago;
 import org.upc.trabajo_aplicaciones_web.repository.MetodoPagoRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MetodoPagoService {
-
     private final MetodoPagoRepository metodoPagoRepository;
-    private final ModelMapper modelMapper;
 
     public MetodoPagoDTO crear(MetodoPagoDTO metodoPagoDTO) {
         if (metodoPagoRepository.existsByNombre(metodoPagoDTO.getNombre())) {
             throw new RuntimeException("El método de pago ya existe");
         }
 
-        MetodoPago metodoPago = modelMapper.map(metodoPagoDTO, MetodoPago.class);
+        MetodoPago metodoPago = new MetodoPago();
+        metodoPago.setNombre(metodoPagoDTO.getNombre());
+        metodoPago.setDescripcion(metodoPagoDTO.getDescripcion());
+        metodoPago.setEstado(metodoPagoDTO.getEstado() != null ? metodoPagoDTO.getEstado() : true);
+
         metodoPago = metodoPagoRepository.save(metodoPago);
-        return modelMapper.map(metodoPago, MetodoPagoDTO.class);
+        return convertirAMetodoPagoDTO(metodoPago);
     }
 
     public List<MetodoPagoDTO> obtenerTodos() {
-        return metodoPagoRepository.findAll()
-                .stream()
-                .map(metodo -> modelMapper.map(metodo, MetodoPagoDTO.class))
-                .collect(Collectors.toList());
+        List<MetodoPago> metodosPago = metodoPagoRepository.findAll();
+        List<MetodoPagoDTO> metodoPagoDTOs = new ArrayList<>();
+        for (MetodoPago metodo : metodosPago) {
+            metodoPagoDTOs.add(convertirAMetodoPagoDTO(metodo));
+        }
+        return metodoPagoDTOs;
     }
 
     public MetodoPagoDTO obtenerPorId(Long id) {
         MetodoPago metodoPago = metodoPagoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Método de pago no encontrado"));
-        return modelMapper.map(metodoPago, MetodoPagoDTO.class);
+        return convertirAMetodoPagoDTO(metodoPago);
     }
 
     public MetodoPagoDTO actualizar(Long id, MetodoPagoDTO metodoPagoDTO) {
@@ -49,7 +54,7 @@ public class MetodoPagoService {
         metodoExistente.setEstado(metodoPagoDTO.getEstado());
 
         metodoExistente = metodoPagoRepository.save(metodoExistente);
-        return modelMapper.map(metodoExistente, MetodoPagoDTO.class);
+        return convertirAMetodoPagoDTO(metodoExistente);
     }
 
     public void eliminar(Long id) {
@@ -64,17 +69,28 @@ public class MetodoPagoService {
                 .orElseThrow(() -> new RuntimeException("Método de pago no encontrado"));
         metodoPago.setEstado(estado);
         metodoPago = metodoPagoRepository.save(metodoPago);
-        return modelMapper.map(metodoPago, MetodoPagoDTO.class);
+        return convertirAMetodoPagoDTO(metodoPago);
     }
 
     public List<MetodoPagoDTO> obtenerActivos() {
-        return metodoPagoRepository.findByEstadoTrue()
-                .stream()
-                .map(metodo -> modelMapper.map(metodo, MetodoPagoDTO.class))
-                .collect(Collectors.toList());
+        List<MetodoPago> metodosPago = metodoPagoRepository.findByEstadoTrue();
+        List<MetodoPagoDTO> metodoPagoDTOs = new ArrayList<>();
+        for (MetodoPago metodo : metodosPago) {
+            metodoPagoDTOs.add(convertirAMetodoPagoDTO(metodo));
+        }
+        return metodoPagoDTOs;
     }
 
     public long contarMetodosActivos() {
         return metodoPagoRepository.countByEstadoTrue();
+    }
+
+    private MetodoPagoDTO convertirAMetodoPagoDTO(MetodoPago metodoPago) {
+        MetodoPagoDTO dto = new MetodoPagoDTO();
+        dto.setMetodoPagoId(metodoPago.getMetodoPagoId());
+        dto.setNombre(metodoPago.getNombre());
+        dto.setDescripcion(metodoPago.getDescripcion());
+        dto.setEstado(metodoPago.getEstado());
+        return dto;
     }
 }

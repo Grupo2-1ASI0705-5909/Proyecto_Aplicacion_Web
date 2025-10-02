@@ -10,41 +10,43 @@ import org.upc.trabajo_aplicaciones_web.repository.NotificacionRepository;
 import org.upc.trabajo_aplicaciones_web.repository.UsuarioRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class NotificacionService {
-
     private final NotificacionRepository notificacionRepository;
     private final UsuarioRepository usuarioRepository;
-    private final ModelMapper modelMapper;
 
     public NotificacionDTO crear(NotificacionDTO notificacionDTO) {
         Usuario usuario = usuarioRepository.findById(notificacionDTO.getUsuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Notificacion notificacion = modelMapper.map(notificacionDTO, Notificacion.class);
+        Notificacion notificacion = new Notificacion();
         notificacion.setUsuario(usuario);
-        notificacion.setFechaEnvio(LocalDateTime.now());
-        notificacion.setLeido(false);
+        notificacion.setTitulo(notificacionDTO.getTitulo());
+        notificacion.setMensaje(notificacionDTO.getMensaje());
+        notificacion.setLeido(notificacionDTO.getLeido() != null ? notificacionDTO.getLeido() : false);
 
         notificacion = notificacionRepository.save(notificacion);
-        return modelMapper.map(notificacion, NotificacionDTO.class);
+        return convertirANotificacionDTO(notificacion);
     }
 
     public List<NotificacionDTO> obtenerTodos() {
-        return notificacionRepository.findAll()
-                .stream()
-                .map(notificacion -> modelMapper.map(notificacion, NotificacionDTO.class))
-                .collect(Collectors.toList());
+        List<Notificacion> notificaciones = notificacionRepository.findAll();
+        List<NotificacionDTO> notificacionDTOs = new ArrayList<>();
+        for (Notificacion notificacion : notificaciones) {
+            notificacionDTOs.add(convertirANotificacionDTO(notificacion));
+        }
+        return notificacionDTOs;
     }
 
     public NotificacionDTO obtenerPorId(Long id) {
         Notificacion notificacion = notificacionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Notificación no encontrada"));
-        return modelMapper.map(notificacion, NotificacionDTO.class);
+        return convertirANotificacionDTO(notificacion);
     }
 
     public NotificacionDTO actualizar(Long id, NotificacionDTO notificacionDTO) {
@@ -56,7 +58,7 @@ public class NotificacionService {
         notificacionExistente.setLeido(notificacionDTO.getLeido());
 
         notificacionExistente = notificacionRepository.save(notificacionExistente);
-        return modelMapper.map(notificacionExistente, NotificacionDTO.class);
+        return convertirANotificacionDTO(notificacionExistente);
     }
 
     public void eliminar(Long id) {
@@ -69,37 +71,45 @@ public class NotificacionService {
     public NotificacionDTO marcarComoLeida(Long id) {
         Notificacion notificacion = notificacionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Notificación no encontrada"));
-
         notificacion.marcarComoLeido();
         notificacion = notificacionRepository.save(notificacion);
-
-        return modelMapper.map(notificacion, NotificacionDTO.class);
+        return convertirANotificacionDTO(notificacion);
     }
 
     public List<NotificacionDTO> obtenerPorUsuario(Long usuarioId) {
-        return notificacionRepository.findByUsuarioUsuarioId(usuarioId)
-                .stream()
-                .map(notificacion -> modelMapper.map(notificacion, NotificacionDTO.class))
-                .collect(Collectors.toList());
+        List<Notificacion> notificaciones = notificacionRepository.findByUsuarioUsuarioId(usuarioId);
+        List<NotificacionDTO> notificacionDTOs = new ArrayList<>();
+        for (Notificacion notificacion : notificaciones) {
+            notificacionDTOs.add(convertirANotificacionDTO(notificacion));
+        }
+        return notificacionDTOs;
     }
 
     public List<NotificacionDTO> obtenerNoLeidasPorUsuario(Long usuarioId) {
-        return notificacionRepository.findByUsuarioUsuarioIdAndLeidoFalse(usuarioId)
-                .stream()
-                .map(notificacion -> modelMapper.map(notificacion, NotificacionDTO.class))
-                .collect(Collectors.toList());
+        List<Notificacion> notificaciones = notificacionRepository.findByUsuarioUsuarioIdAndLeidoFalse(usuarioId);
+        List<NotificacionDTO> notificacionDTOs = new ArrayList<>();
+        for (Notificacion notificacion : notificaciones) {
+            notificacionDTOs.add(convertirANotificacionDTO(notificacion));
+        }
+        return notificacionDTOs;
     }
 
     public List<NotificacionDTO> obtenerRecientes() {
         LocalDateTime fechaLimite = LocalDateTime.now().minusDays(7);
-        return notificacionRepository.findNotificacionesRecientes(fechaLimite)
-                .stream()
-                .map(notificacion -> modelMapper.map(notificacion, NotificacionDTO.class))
-                .collect(Collectors.toList());
+        List<Notificacion> notificaciones = notificacionRepository.findNotificacionesRecientes(fechaLimite);
+        List<NotificacionDTO> notificacionDTOs = new ArrayList<>();
+        for (Notificacion notificacion : notificaciones) {
+            notificacionDTOs.add(convertirANotificacionDTO(notificacion));
+        }
+        return notificacionDTOs;
     }
 
     public void marcarTodasComoLeidas(Long usuarioId) {
-        notificacionRepository.marcarComoLeidas(usuarioId);
+        List<Notificacion> notificaciones = notificacionRepository.findByUsuarioUsuarioIdAndLeidoFalse(usuarioId);
+        for (Notificacion notificacion : notificaciones) {
+            notificacion.marcarComoLeido();
+            notificacionRepository.save(notificacion);
+        }
     }
 
     public long contarNoLeidasPorUsuario(Long usuarioId) {
@@ -107,9 +117,22 @@ public class NotificacionService {
     }
 
     public List<NotificacionDTO> obtenerPorTipo(String tipo) {
-        return notificacionRepository.findByTipo(tipo)
-                .stream()
-                .map(notificacion -> modelMapper.map(notificacion, NotificacionDTO.class))
-                .collect(Collectors.toList());
+        List<Notificacion> notificaciones = notificacionRepository.findByTipo(tipo);
+        List<NotificacionDTO> notificacionDTOs = new ArrayList<>();
+        for (Notificacion notificacion : notificaciones) {
+            notificacionDTOs.add(convertirANotificacionDTO(notificacion));
+        }
+        return notificacionDTOs;
+    }
+
+    private NotificacionDTO convertirANotificacionDTO(Notificacion notificacion) {
+        NotificacionDTO dto = new NotificacionDTO();
+        dto.setNotificacionId(notificacion.getNotificacionId());
+        dto.setUsuarioId(notificacion.getUsuario().getUsuarioId());
+        dto.setTitulo(notificacion.getTitulo());
+        dto.setMensaje(notificacion.getMensaje());
+        dto.setFechaEnvio(notificacion.getFechaEnvio());
+        dto.setLeido(notificacion.getLeido());
+        return dto;
     }
 }

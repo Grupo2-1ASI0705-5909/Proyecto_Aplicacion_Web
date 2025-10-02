@@ -9,51 +9,57 @@ import org.upc.trabajo_aplicaciones_web.model.Usuario;
 import org.upc.trabajo_aplicaciones_web.repository.RolRepository;
 import org.upc.trabajo_aplicaciones_web.repository.UsuarioRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
-
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
-    private final ModelMapper modelMapper;
 
     public UsuarioDTO crear(UsuarioDTO usuarioDTO) {
         if (usuarioRepository.existsByEmail(usuarioDTO.getEmail())) {
             throw new RuntimeException("El email ya está registrado");
         }
 
-        Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
+        Usuario usuario = new Usuario();
+        usuario.setNombre(usuarioDTO.getNombre());
+        usuario.setApellido(usuarioDTO.getApellido());
+        usuario.setEmail(usuarioDTO.getEmail());
+        usuario.setTelefono(usuarioDTO.getTelefono());
+        usuario.setPasswordHash(usuarioDTO.getPasswordHash());
+        usuario.setEstado(usuarioDTO.getEstado() != null ? usuarioDTO.getEstado() : true);
 
-        // Asignar roles si se proporcionan
         if (usuarioDTO.getRolesIds() != null && !usuarioDTO.getRolesIds().isEmpty()) {
             List<Rol> roles = rolRepository.findAllById(usuarioDTO.getRolesIds());
             usuario.setRoles(roles);
         }
 
         usuario = usuarioRepository.save(usuario);
-        return modelMapper.map(usuario, UsuarioDTO.class);
+        return convertirAUsuarioDTO(usuario);
     }
 
     public List<UsuarioDTO> obtenerTodos() {
-        return usuarioRepository.findAll()
-                .stream()
-                .map(usuario -> modelMapper.map(usuario, UsuarioDTO.class))
-                .collect(Collectors.toList());
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        List<UsuarioDTO> usuarioDTOs = new ArrayList<>();
+        for (Usuario usuario : usuarios) {
+            usuarioDTOs.add(convertirAUsuarioDTO(usuario));
+        }
+        return usuarioDTOs;
     }
 
     public UsuarioDTO obtenerPorId(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        return modelMapper.map(usuario, UsuarioDTO.class);
+        return convertirAUsuarioDTO(usuario);
     }
 
     public UsuarioDTO obtenerPorEmail(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        return modelMapper.map(usuario, UsuarioDTO.class);
+        return convertirAUsuarioDTO(usuario);
     }
 
     public UsuarioDTO actualizar(Long id, UsuarioDTO usuarioDTO) {
@@ -65,14 +71,13 @@ public class UsuarioService {
         usuarioExistente.setTelefono(usuarioDTO.getTelefono());
         usuarioExistente.setEstado(usuarioDTO.getEstado());
 
-        // Actualizar roles si se proporcionan
         if (usuarioDTO.getRolesIds() != null) {
             List<Rol> roles = rolRepository.findAllById(usuarioDTO.getRolesIds());
             usuarioExistente.setRoles(roles);
         }
 
         usuarioExistente = usuarioRepository.save(usuarioExistente);
-        return modelMapper.map(usuarioExistente, UsuarioDTO.class);
+        return convertirAUsuarioDTO(usuarioExistente);
     }
 
     public void eliminar(Long id) {
@@ -87,21 +92,25 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         usuario.setEstado(estado);
         usuario = usuarioRepository.save(usuario);
-        return modelMapper.map(usuario, UsuarioDTO.class);
+        return convertirAUsuarioDTO(usuario);
     }
 
     public List<UsuarioDTO> buscarPorNombre(String nombre) {
-        return usuarioRepository.buscarPorNombre(nombre)
-                .stream()
-                .map(usuario -> modelMapper.map(usuario, UsuarioDTO.class))
-                .collect(Collectors.toList());
+        List<Usuario> usuarios = usuarioRepository.buscarPorNombre(nombre);
+        List<UsuarioDTO> usuarioDTOs = new ArrayList<>();
+        for (Usuario usuario : usuarios) {
+            usuarioDTOs.add(convertirAUsuarioDTO(usuario));
+        }
+        return usuarioDTOs;
     }
 
     public List<UsuarioDTO> obtenerPorEstado(Boolean estado) {
-        return usuarioRepository.findByEstado(estado)
-                .stream()
-                .map(usuario -> modelMapper.map(usuario, UsuarioDTO.class))
-                .collect(Collectors.toList());
+        List<Usuario> usuarios = usuarioRepository.findByEstado(estado);
+        List<UsuarioDTO> usuarioDTOs = new ArrayList<>();
+        for (Usuario usuario : usuarios) {
+            usuarioDTOs.add(convertirAUsuarioDTO(usuario));
+        }
+        return usuarioDTOs;
     }
 
     public long contarUsuariosActivos() {
@@ -109,9 +118,32 @@ public class UsuarioService {
     }
 
     public List<UsuarioDTO> obtenerPorRol(Long rolId) {
-        return usuarioRepository.findByRolId(rolId)
-                .stream()
-                .map(usuario -> modelMapper.map(usuario, UsuarioDTO.class))
-                .collect(Collectors.toList());
+        List<Usuario> usuarios = usuarioRepository.findByRolId(rolId);
+        List<UsuarioDTO> usuarioDTOs = new ArrayList<>();
+        for (Usuario usuario : usuarios) {
+            usuarioDTOs.add(convertirAUsuarioDTO(usuario));
+        }
+        return usuarioDTOs;
+    }
+
+    private UsuarioDTO convertirAUsuarioDTO(Usuario usuario) {
+        UsuarioDTO dto = new UsuarioDTO();
+        dto.setUsuarioId(usuario.getUsuarioId());
+        dto.setNombre(usuario.getNombre());
+        dto.setApellido(usuario.getApellido());
+        dto.setEmail(usuario.getEmail());
+        dto.setTelefono(usuario.getTelefono());
+        dto.setPasswordHash(usuario.getPasswordHash());
+        dto.setEstado(usuario.getEstado());
+        dto.setCreatedAt(usuario.getCreatedAt());
+
+        // Convertir roles a IDs
+        List<Long> rolesIds = new ArrayList<>();
+        for (Rol rol : usuario.getRoles()) {
+            rolesIds.add(rol.getRolId());
+        }
+        dto.setRolesIds(rolesIds);
+
+        return dto;
     }
 }

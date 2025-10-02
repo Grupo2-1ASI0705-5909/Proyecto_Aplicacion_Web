@@ -12,6 +12,7 @@ import org.upc.trabajo_aplicaciones_web.repository.UsuarioRepository;
 import org.upc.trabajo_aplicaciones_web.repository.WalletRepository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,6 @@ public class WalletService {
     private final WalletRepository walletRepository;
     private final UsuarioRepository usuarioRepository;
     private final CriptomonedaRepository criptomonedaRepository;
-    private final ModelMapper modelMapper;
 
     public WalletDTO crear(WalletDTO walletDTO) {
         Usuario usuario = usuarioRepository.findById(walletDTO.getUsuarioId())
@@ -31,31 +31,35 @@ public class WalletService {
         Criptomoneda criptomoneda = criptomonedaRepository.findById(walletDTO.getCriptoId())
                 .orElseThrow(() -> new RuntimeException("Criptomoneda no encontrada"));
 
-        // Verificar si ya existe un wallet para este usuario y criptomoneda
         if (walletRepository.findByUsuarioUsuarioIdAndCriptomonedaCriptoId(
                 walletDTO.getUsuarioId(), walletDTO.getCriptoId()).isPresent()) {
             throw new RuntimeException("El usuario ya tiene un wallet para esta criptomoneda");
         }
 
-        Wallet wallet = modelMapper.map(walletDTO, Wallet.class);
+        Wallet wallet = new Wallet();
         wallet.setUsuario(usuario);
         wallet.setCriptomoneda(criptomoneda);
+        wallet.setDireccion(walletDTO.getDireccion());
+        wallet.setSaldo(walletDTO.getSaldo() != null ? walletDTO.getSaldo() : BigDecimal.ZERO);
+        wallet.setEstado(walletDTO.getEstado() != null ? walletDTO.getEstado() : true);
 
         wallet = walletRepository.save(wallet);
-        return modelMapper.map(wallet, WalletDTO.class);
+        return convertirAWalletDTO(wallet);
     }
 
     public List<WalletDTO> obtenerTodos() {
-        return walletRepository.findAll()
-                .stream()
-                .map(wallet -> modelMapper.map(wallet, WalletDTO.class))
-                .collect(Collectors.toList());
+        List<Wallet> wallets = walletRepository.findAll();
+        List<WalletDTO> walletDTOs = new ArrayList<>();
+        for (Wallet wallet : wallets) {
+            walletDTOs.add(convertirAWalletDTO(wallet));
+        }
+        return walletDTOs;
     }
 
     public WalletDTO obtenerPorId(Long id) {
         Wallet wallet = walletRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Wallet no encontrado"));
-        return modelMapper.map(wallet, WalletDTO.class);
+        return convertirAWalletDTO(wallet);
     }
 
     public WalletDTO actualizar(Long id, WalletDTO walletDTO) {
@@ -67,7 +71,7 @@ public class WalletService {
         walletExistente.setEstado(walletDTO.getEstado());
 
         walletExistente = walletRepository.save(walletExistente);
-        return modelMapper.map(walletExistente, WalletDTO.class);
+        return convertirAWalletDTO(walletExistente);
     }
 
     public void eliminar(Long id) {
@@ -82,37 +86,39 @@ public class WalletService {
                 .orElseThrow(() -> new RuntimeException("Wallet no encontrado"));
         wallet.setEstado(estado);
         wallet = walletRepository.save(wallet);
-        return modelMapper.map(wallet, WalletDTO.class);
+        return convertirAWalletDTO(wallet);
     }
 
     public List<WalletDTO> obtenerPorUsuario(Long usuarioId) {
-        return walletRepository.findByUsuarioUsuarioId(usuarioId)
-                .stream()
-                .map(wallet -> modelMapper.map(wallet, WalletDTO.class))
-                .collect(Collectors.toList());
+        List<Wallet> wallets = walletRepository.findByUsuarioUsuarioId(usuarioId);
+        List<WalletDTO> walletDTOs = new ArrayList<>();
+        for (Wallet wallet : wallets) {
+            walletDTOs.add(convertirAWalletDTO(wallet));
+        }
+        return walletDTOs;
     }
 
     public List<WalletDTO> obtenerPorCriptomoneda(Long criptoId) {
-        return walletRepository.findByCriptomonedaCriptoId(criptoId)
-                .stream()
-                .map(wallet -> modelMapper.map(wallet, WalletDTO.class))
-                .collect(Collectors.toList());
+        List<Wallet> wallets = walletRepository.findByCriptomonedaCriptoId(criptoId);
+        List<WalletDTO> walletDTOs = new ArrayList<>();
+        for (Wallet wallet : wallets) {
+            walletDTOs.add(convertirAWalletDTO(wallet));
+        }
+        return walletDTOs;
     }
 
     public WalletDTO obtenerPorUsuarioYCripto(Long usuarioId, Long criptoId) {
         Wallet wallet = walletRepository.findByUsuarioUsuarioIdAndCriptomonedaCriptoId(usuarioId, criptoId)
                 .orElseThrow(() -> new RuntimeException("Wallet no encontrado"));
-        return modelMapper.map(wallet, WalletDTO.class);
+        return convertirAWalletDTO(wallet);
     }
 
     public WalletDTO actualizarSaldo(Long id, BigDecimal nuevoSaldo) {
         Wallet wallet = walletRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Wallet no encontrado"));
-
         wallet.setSaldo(nuevoSaldo);
         wallet = walletRepository.save(wallet);
-
-        return modelMapper.map(wallet, WalletDTO.class);
+        return convertirAWalletDTO(wallet);
     }
 
     public BigDecimal obtenerSaldoTotalUsuario(Long usuarioId) {
@@ -121,9 +127,23 @@ public class WalletService {
     }
 
     public List<WalletDTO> obtenerWalletsConSaldoMayorA(BigDecimal saldoMinimo) {
-        return walletRepository.findWalletsConSaldoMayorA(saldoMinimo)
-                .stream()
-                .map(wallet -> modelMapper.map(wallet, WalletDTO.class))
-                .collect(Collectors.toList());
+        List<Wallet> wallets = walletRepository.findWalletsConSaldoMayorA(saldoMinimo);
+        List<WalletDTO> walletDTOs = new ArrayList<>();
+        for (Wallet wallet : wallets) {
+            walletDTOs.add(convertirAWalletDTO(wallet));
+        }
+        return walletDTOs;
+    }
+
+    private WalletDTO convertirAWalletDTO(Wallet wallet) {
+        WalletDTO dto = new WalletDTO();
+        dto.setWalletId(wallet.getWalletId());
+        dto.setUsuarioId(wallet.getUsuario().getUsuarioId());
+        dto.setCriptoId(wallet.getCriptomoneda().getCriptoId());
+        dto.setDireccion(wallet.getDireccion());
+        dto.setSaldo(wallet.getSaldo());
+        dto.setEstado(wallet.getEstado());
+        dto.setUltimaActualizacion(wallet.getUltimaActualizacion());
+        return dto;
     }
 }

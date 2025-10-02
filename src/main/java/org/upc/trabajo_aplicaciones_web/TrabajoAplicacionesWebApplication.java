@@ -15,17 +15,5 @@ public class TrabajoAplicacionesWebApplication {
         SpringApplication.run(TrabajoAplicacionesWebApplication.class, args);
     }
 
-    @Bean
-    public ModelMapper modelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
 
-        // CONFIGURACIÓN PARA EVITAR LOOPS
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT)
-                .setFieldMatchingEnabled(true)
-                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
-                .setSkipNullEnabled(true); // Opcional: ignora campos nulos
-
-        return modelMapper;
-    }
 }
