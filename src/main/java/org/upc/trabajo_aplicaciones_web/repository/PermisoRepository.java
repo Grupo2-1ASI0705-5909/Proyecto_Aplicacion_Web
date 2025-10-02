@@ -19,7 +19,7 @@ public interface PermisoRepository extends JpaRepository<Permiso, Long> {
     boolean existsByNombre(String nombre);
 
     // Buscar permisos por rol
-    @Query("SELECT p FROM Permiso p JOIN p.roles r WHERE r.id = :rolId")
+    @Query("SELECT p FROM Permiso p JOIN p.roles r WHERE r.rolId = :rolId")
     List<Permiso> findByRolId(@Param("rolId") Long rolId);
 
     // Buscar permisos por nombre (búsqueda parcial)

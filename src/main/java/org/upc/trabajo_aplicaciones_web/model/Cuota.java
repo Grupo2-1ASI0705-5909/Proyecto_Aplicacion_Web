@@ -6,36 +6,35 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "cuota")
+@Table(name = "cuotas")
 @Data
 public class Cuota {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "cuotaid")
+    private Long cuotaId;
 
-    // RELACIONES
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plan_pago_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "planpagoid", nullable = false)
     private PlanPago planPago;
 
-    // DATOS DE LA CUOTA
-    @Column(nullable = false)
+    @Column(nullable = false, name = "numerocuota")
     private Integer numeroCuota;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 18, scale = 2)
     private BigDecimal monto;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "fechavencimiento")
     private LocalDate fechaVencimiento;
 
-    @Column(nullable = false)
+    @Column(name = "fechapago")
     private LocalDate fechaPago;
 
     @Column(nullable = false, length = 20)
-    private String estado = "PENDIENTE"; // PENDIENTE, PAGADA, VENCIDA
+    private String estado = "PENDIENTE";
 
     // MÉTODO PARA VALIDAR SI ESTÁ VENCIDA
     public boolean estaVencida() {
-        return LocalDate.now().isAfter(fechaVencimiento) && !estado.equals("PAGADA");
+        return LocalDate.now().isAfter(fechaVencimiento) && !"PAGADA".equals(estado);
     }
 }

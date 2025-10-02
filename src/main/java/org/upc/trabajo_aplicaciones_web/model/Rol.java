@@ -6,12 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "rol")
+@Table(name = "roles")
 @Data
 public class Rol {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "rolid")
+    private Long rolId;
 
     @Column(nullable = false, length = 50)
     private String nombre;
@@ -19,26 +20,15 @@ public class Rol {
     @Column(nullable = false, length = 200)
     private String descripcion;
 
-    // RELACIONES
+    // RELACIONES MANY TO MANY - SIN ENTIDAD INTERMEDIA
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private List<Usuario> usuarios = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "rol_permiso",
-            joinColumns = @JoinColumn(name = "rol_id"),
-            inverseJoinColumns = @JoinColumn(name = "permiso_id")
+            name = "rolpermiso",
+            joinColumns = @JoinColumn(name = "rolid"),
+            inverseJoinColumns = @JoinColumn(name = "permisoid")
     )
     private List<Permiso> permisos = new ArrayList<>();
-
-    // MÉTODOS CONVENIENTES
-    public void agregarPermiso(Permiso permiso) {
-        this.permisos.add(permiso);
-        permiso.getRoles().add(this);
-    }
-
-    public void removerPermiso(Permiso permiso) {
-        this.permisos.remove(permiso);
-        permiso.getRoles().remove(this);
-    }
 }

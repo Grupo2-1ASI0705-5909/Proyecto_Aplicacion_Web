@@ -77,14 +77,14 @@ public class NotificacionService {
     }
 
     public List<NotificacionDTO> obtenerPorUsuario(Long usuarioId) {
-        return notificacionRepository.findByUsuarioId(usuarioId)
+        return notificacionRepository.findByUsuarioUsuarioId(usuarioId)
                 .stream()
                 .map(notificacion -> modelMapper.map(notificacion, NotificacionDTO.class))
                 .collect(Collectors.toList());
     }
 
     public List<NotificacionDTO> obtenerNoLeidasPorUsuario(Long usuarioId) {
-        return notificacionRepository.findByUsuarioIdAndLeidoFalse(usuarioId)
+        return notificacionRepository.findByUsuarioUsuarioIdAndLeidoFalse(usuarioId)
                 .stream()
                 .map(notificacion -> modelMapper.map(notificacion, NotificacionDTO.class))
                 .collect(Collectors.toList());
@@ -103,6 +103,13 @@ public class NotificacionService {
     }
 
     public long contarNoLeidasPorUsuario(Long usuarioId) {
-        return notificacionRepository.countByUsuarioIdAndLeidoFalse(usuarioId);
+        return notificacionRepository.countByUsuarioUsuarioIdAndLeidoFalse(usuarioId);
+    }
+
+    public List<NotificacionDTO> obtenerPorTipo(String tipo) {
+        return notificacionRepository.findByTipo(tipo)
+                .stream()
+                .map(notificacion -> modelMapper.map(notificacion, NotificacionDTO.class))
+                .collect(Collectors.toList());
     }
 }

@@ -25,4 +25,8 @@ public interface MetodoPagoRepository extends JpaRepository<MetodoPago, Long> {
 
     // Contar métodos de pago activos
     long countByEstadoTrue();
+
+    // Métodos más usados
+    @Query("SELECT mp.nombre, COUNT(t) FROM MetodoPago mp LEFT JOIN mp.transacciones t GROUP BY mp.nombre ORDER BY COUNT(t) DESC")
+    List<Object[]> findMetodosMasUsados();
 }

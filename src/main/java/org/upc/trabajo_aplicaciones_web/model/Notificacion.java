@@ -5,26 +5,25 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "notificacion")
+@Table(name = "notificaciones")
 @Data
 public class Notificacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "notificacionid")
+    private Long notificacionId;
 
-    // RELACIONES
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "usuarioid", nullable = false)
     private Usuario usuario;
 
-    // DATOS DE LA NOTIFICACIÓN
     @Column(nullable = false, length = 100)
     private String titulo;
 
     @Column(nullable = false, length = 300)
     private String mensaje;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "fechaenvio")
     private LocalDateTime fechaEnvio = LocalDateTime.now();
 
     @Column(nullable = false)

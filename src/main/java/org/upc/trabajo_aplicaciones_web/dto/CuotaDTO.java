@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 @Data
 public class CuotaDTO {
-    private Long id;
+    private Long cuotaId;
     private Long planPagoId;
     private Integer numeroCuota;
     private BigDecimal monto;

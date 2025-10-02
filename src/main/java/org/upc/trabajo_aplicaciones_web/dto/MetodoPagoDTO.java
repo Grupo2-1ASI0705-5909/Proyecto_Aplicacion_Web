@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class MetodoPagoDTO {
-    private Long id;
+    private Long metodoPagoId;
     private String nombre;
     private String descripcion;
     private Boolean estado = true;

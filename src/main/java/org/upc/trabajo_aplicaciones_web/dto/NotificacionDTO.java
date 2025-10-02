@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class NotificacionDTO {
-    private Long id;
+    private Long notificacionId;
     private Long usuarioId;
     private String titulo;
     private String mensaje;
@@ -22,6 +22,4 @@ public class NotificacionDTO {
         this.mensaje = mensaje;
         this.fechaEnvio = LocalDateTime.now();
     }
-    // to bien
-
 }

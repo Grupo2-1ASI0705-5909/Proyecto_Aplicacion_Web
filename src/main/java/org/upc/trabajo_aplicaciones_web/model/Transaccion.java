@@ -8,37 +8,56 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "transaccion")
+@Table(name = "transacciones")
 @Data
 public class Transaccion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "transaccionid")
+    private Long transaccionId;
 
-    // RELACIONES
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "usuarioid", nullable = false)
     private Usuario usuario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comercio_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "comercioid", nullable = false)
     private Comercio comercio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "metodo_pago_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "metodopagoid", nullable = false)
     private MetodoPago metodoPago;
 
-    // DATOS DE LA TRANSACCIÓN
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal montoTotal;
+    @ManyToOne
+    @JoinColumn(name = "criptoid")
+    private Criptomoneda criptomoneda;
 
-    @Column(nullable = false)
+    @Column(length = 10, name = "codigomoneda")
+    private String codigoMoneda;
+
+    @Column(precision = 18, scale = 2, name = "montototalfiat")
+    private BigDecimal montoTotalFiat;
+
+    @Column(precision = 18, scale = 8, name = "montototalcripto")
+    private BigDecimal montoTotalCripto;
+
+    @Column(precision = 28, scale = 12, name = "tasaaplicada")
+    private BigDecimal tasaAplicada;
+
+    @Column(length = 100, name = "txhash")
+    private String txHash;
+
+    @ManyToOne
+    @JoinColumn(name = "tipocambioid")
+    private TipoCambio tipoCambio;
+
+    @Column(nullable = false, name = "fechatransaccion")
     private LocalDateTime fechaTransaccion = LocalDateTime.now();
 
     @Column(nullable = false, length = 20)
-    private String estado = "PENDIENTE"; // PENDIENTE, COMPLETADA, RECHAZADA
+    private String estado;
 
-    // RELACIONES HIJAS
+    // RELACIONES
     @OneToMany(mappedBy = "transaccion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlanPago> planesPago = new ArrayList<>();
 }

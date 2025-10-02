@@ -27,6 +27,7 @@ public class UsuarioService {
 
         Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
 
+        // Asignar roles si se proporcionan
         if (usuarioDTO.getRolesIds() != null && !usuarioDTO.getRolesIds().isEmpty()) {
             List<Rol> roles = rolRepository.findAllById(usuarioDTO.getRolesIds());
             usuario.setRoles(roles);
@@ -64,6 +65,7 @@ public class UsuarioService {
         usuarioExistente.setTelefono(usuarioDTO.getTelefono());
         usuarioExistente.setEstado(usuarioDTO.getEstado());
 
+        // Actualizar roles si se proporcionan
         if (usuarioDTO.getRolesIds() != null) {
             List<Rol> roles = rolRepository.findAllById(usuarioDTO.getRolesIds());
             usuarioExistente.setRoles(roles);
@@ -104,5 +106,12 @@ public class UsuarioService {
 
     public long contarUsuariosActivos() {
         return usuarioRepository.countByEstadoTrue();
+    }
+
+    public List<UsuarioDTO> obtenerPorRol(Long rolId) {
+        return usuarioRepository.findByRolId(rolId)
+                .stream()
+                .map(usuario -> modelMapper.map(usuario, UsuarioDTO.class))
+                .collect(Collectors.toList());
     }
 }

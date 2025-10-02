@@ -84,7 +84,7 @@ public class ComercioService {
     }
 
     public List<ComercioDTO> obtenerPorUsuario(Long usuarioId) {
-        return comercioRepository.findByUsuarioId(usuarioId)
+        return comercioRepository.findByUsuarioUsuarioId(usuarioId)
                 .stream()
                 .map(comercio -> modelMapper.map(comercio, ComercioDTO.class))
                 .collect(Collectors.toList());

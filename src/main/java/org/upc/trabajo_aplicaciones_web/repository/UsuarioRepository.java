@@ -26,9 +26,13 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     List<Usuario> buscarPorNombre(@Param("nombre") String nombre);
 
     // Buscar usuarios por rol
-    @Query("SELECT u FROM Usuario u JOIN u.roles r WHERE r.id = :rolId")
+    @Query("SELECT u FROM Usuario u JOIN u.roles r WHERE r.rolId = :rolId")
     List<Usuario> findByRolId(@Param("rolId") Long rolId);
 
     // Contar usuarios activos
     long countByEstadoTrue();
+
+    // Buscar usuarios con comercios
+    @Query("SELECT u FROM Usuario u LEFT JOIN FETCH u.comercios WHERE u.usuarioId = :usuarioId")
+    Optional<Usuario> findWithComerciosById(@Param("usuarioId") Long usuarioId);
 }

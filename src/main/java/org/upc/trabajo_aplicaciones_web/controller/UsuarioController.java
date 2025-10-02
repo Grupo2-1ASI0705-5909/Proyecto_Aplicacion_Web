@@ -75,4 +75,10 @@ public class UsuarioController {
         long cantidad = usuarioService.contarUsuariosActivos();
         return ResponseEntity.ok(cantidad);
     }
+
+    @GetMapping("/rol/{rolId}")
+    public ResponseEntity<List<UsuarioDTO>> obtenerPorRol(@PathVariable Long rolId) {
+        List<UsuarioDTO> usuarios = usuarioService.obtenerPorRol(rolId);
+        return ResponseEntity.ok(usuarios);
+    }
 }

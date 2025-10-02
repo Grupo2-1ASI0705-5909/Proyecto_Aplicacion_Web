@@ -4,14 +4,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import org.upc.trabajo_aplicaciones_web.dto.TransaccionDTO;
-import org.upc.trabajo_aplicaciones_web.model.Comercio;
-import org.upc.trabajo_aplicaciones_web.model.MetodoPago;
-import org.upc.trabajo_aplicaciones_web.model.Transaccion;
-import org.upc.trabajo_aplicaciones_web.model.Usuario;
-import org.upc.trabajo_aplicaciones_web.repository.ComercioRepository;
-import org.upc.trabajo_aplicaciones_web.repository.MetodoPagoRepository;
-import org.upc.trabajo_aplicaciones_web.repository.TransaccionRepository;
-import org.upc.trabajo_aplicaciones_web.repository.UsuarioRepository;
+import org.upc.trabajo_aplicaciones_web.model.*;
+import org.upc.trabajo_aplicaciones_web.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +19,8 @@ public class TransaccionService {
     private final UsuarioRepository usuarioRepository;
     private final ComercioRepository comercioRepository;
     private final MetodoPagoRepository metodoPagoRepository;
+    private final CriptomonedaRepository criptomonedaRepository;
+    private final TipoCambioRepository tipoCambioRepository;
     private final ModelMapper modelMapper;
 
     public TransaccionDTO crear(TransaccionDTO transaccionDTO) {
@@ -41,6 +37,21 @@ public class TransaccionService {
         transaccion.setUsuario(usuario);
         transaccion.setComercio(comercio);
         transaccion.setMetodoPago(metodoPago);
+
+        // Asignar criptomoneda si se proporciona
+        if (transaccionDTO.getCriptoId() != null) {
+            Criptomoneda criptomoneda = criptomonedaRepository.findById(transaccionDTO.getCriptoId())
+                    .orElseThrow(() -> new RuntimeException("Criptomoneda no encontrada"));
+            transaccion.setCriptomoneda(criptomoneda);
+        }
+
+        // Asignar tipo de cambio si se proporciona
+        if (transaccionDTO.getTipoCambioId() != null) {
+            TipoCambio tipoCambio = tipoCambioRepository.findById(transaccionDTO.getTipoCambioId())
+                    .orElseThrow(() -> new RuntimeException("Tipo de cambio no encontrado"));
+            transaccion.setTipoCambio(tipoCambio);
+        }
+
         transaccion.setFechaTransaccion(LocalDateTime.now());
 
         transaccion = transaccionRepository.save(transaccion);
@@ -64,8 +75,10 @@ public class TransaccionService {
         Transaccion transaccionExistente = transaccionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transacción no encontrada"));
 
-        transaccionExistente.setMontoTotal(transaccionDTO.getMontoTotal());
+        transaccionExistente.setMontoTotalFiat(transaccionDTO.getMontoTotalFiat());
+        transaccionExistente.setMontoTotalCripto(transaccionDTO.getMontoTotalCripto());
         transaccionExistente.setEstado(transaccionDTO.getEstado());
+        transaccionExistente.setTxHash(transaccionDTO.getTxHash());
 
         transaccionExistente = transaccionRepository.save(transaccionExistente);
         return modelMapper.map(transaccionExistente, TransaccionDTO.class);
@@ -87,14 +100,14 @@ public class TransaccionService {
     }
 
     public List<TransaccionDTO> obtenerPorUsuario(Long usuarioId) {
-        return transaccionRepository.findByUsuarioId(usuarioId)
+        return transaccionRepository.findByUsuarioUsuarioId(usuarioId)
                 .stream()
                 .map(transaccion -> modelMapper.map(transaccion, TransaccionDTO.class))
                 .collect(Collectors.toList());
     }
 
     public List<TransaccionDTO> obtenerPorComercio(Long comercioId) {
-        return transaccionRepository.findByComercioId(comercioId)
+        return transaccionRepository.findByComercioComercioId(comercioId)
                 .stream()
                 .map(transaccion -> modelMapper.map(transaccion, TransaccionDTO.class))
                 .collect(Collectors.toList());
@@ -107,8 +120,26 @@ public class TransaccionService {
                 .collect(Collectors.toList());
     }
 
-    public Double calcularTotalPorUsuario(Long usuarioId) {
-        Double total = transaccionRepository.calcularTotalPorUsuario(usuarioId);
-        return total != null ? total : 0.0;
+    public List<TransaccionDTO> obtenerTransaccionesConCripto() {
+        return transaccionRepository.findTransaccionesConCripto()
+                .stream()
+                .map(transaccion -> modelMapper.map(transaccion, TransaccionDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    public Double calcularTotalFiatPorUsuario(Long usuarioId) {
+        return transaccionRepository.calcularTotalFiatPorUsuario(usuarioId);
+    }
+
+    public Double calcularTotalCriptoPorUsuario(Long usuarioId) {
+        return transaccionRepository.calcularTotalCriptoPorUsuario(usuarioId);
+    }
+
+    public List<TransaccionDTO> obtenerRecientes() {
+        LocalDateTime fechaLimite = LocalDateTime.now().minusDays(30);
+        return transaccionRepository.findTransaccionesRecientes(fechaLimite)
+                .stream()
+                .map(transaccion -> modelMapper.map(transaccion, TransaccionDTO.class))
+                .collect(Collectors.toList());
     }
 }

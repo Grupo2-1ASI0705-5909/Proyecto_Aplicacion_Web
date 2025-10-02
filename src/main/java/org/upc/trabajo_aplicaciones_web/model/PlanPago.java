@@ -8,40 +8,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "plan_pago")
+@Table(name = "planespago")
 @Data
 public class PlanPago {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "planpagoid")
+    private Long planPagoId;
 
-    // RELACIONES
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "transaccion_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "transaccionid", nullable = false)
     private Transaccion transaccion;
 
-    // DATOS DEL PLAN
-    @Column(nullable = false)
+    @Column(nullable = false, name = "numerocuotas")
     private Integer numeroCuotas;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 18, scale = 2, name = "montoporcuota")
     private BigDecimal montoPorCuota;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal interes;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "fechainicio")
     private LocalDate fechaInicio;
 
-    @Column(nullable = false)
+    @Column(name = "fechafin")
     private LocalDate fechaFin;
 
-    // RELACIONES HIJAS
+    // RELACIONES
     @OneToMany(mappedBy = "planPago", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cuota> cuotas = new ArrayList<>();
 
-    // MÉTODO PARA CALCULAR FECHA FIN AUTOMÁTICAMENTE
+    // MÉTODO PARA CALCULAR FECHA FIN
     @PrePersist
+    @PreUpdate
     public void calcularFechaFin() {
         if (fechaInicio != null && numeroCuotas != null) {
             this.fechaFin = fechaInicio.plusMonths(numeroCuotas);

@@ -64,6 +64,18 @@ public class PlanPagoController {
         return ResponseEntity.ok(planes);
     }
 
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<PlanPagoDTO>> obtenerPorUsuario(@PathVariable Long usuarioId) {
+        List<PlanPagoDTO> planes = planPagoService.obtenerPorUsuario(usuarioId);
+        return ResponseEntity.ok(planes);
+    }
+
+    @GetMapping("/con-cuotas-pendientes")
+    public ResponseEntity<List<PlanPagoDTO>> obtenerPlanesConCuotasPendientes() {
+        List<PlanPagoDTO> planes = planPagoService.obtenerPlanesConCuotasPendientes();
+        return ResponseEntity.ok(planes);
+    }
+
     @GetMapping("/interes-total")
     public ResponseEntity<Double> calcularInteresTotal() {
         Double interesTotal = planPagoService.calcularInteresTotal();

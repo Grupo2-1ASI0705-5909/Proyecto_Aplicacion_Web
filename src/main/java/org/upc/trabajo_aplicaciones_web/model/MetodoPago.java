@@ -6,12 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "metodo_pago")
+@Table(name = "metodospago")
 @Data
 public class MetodoPago {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "metodopagoid")
+    private Long metodoPagoId;
 
     @Column(nullable = false, length = 50)
     private String nombre;

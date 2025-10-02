@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface CuotaRepository extends JpaRepository<Cuota, Long> {
 
     // Buscar por plan de pago
-    List<Cuota> findByPlanPagoId(Long planPagoId);
+    List<Cuota> findByPlanPagoPlanPagoId(Long planPagoId);
 
     // Buscar por estado
     List<Cuota> findByEstado(String estado);
@@ -31,13 +31,22 @@ public interface CuotaRepository extends JpaRepository<Cuota, Long> {
     List<Cuota> findCuotasPorVencer(@Param("fechaInicio") LocalDate fechaInicio, @Param("fechaFin") LocalDate fechaFin);
 
     // Buscar cuota específica por plan y número
-    Optional<Cuota> findByPlanPagoIdAndNumeroCuota(Long planPagoId, Integer numeroCuota);
+    Optional<Cuota> findByPlanPagoPlanPagoIdAndNumeroCuota(Long planPagoId, Integer numeroCuota);
 
     // Calcular total pendiente por plan
-    @Query("SELECT SUM(c.monto) FROM Cuota c WHERE c.planPago.id = :planPagoId AND c.estado = 'PENDIENTE'")
+    @Query("SELECT COALESCE(SUM(c.monto), 0) FROM Cuota c WHERE c.planPago.planPagoId = :planPagoId AND c.estado = 'PENDIENTE'")
     Double calcularTotalPendientePorPlan(@Param("planPagoId") Long planPagoId);
 
     // Contar cuotas por estado
     @Query("SELECT c.estado, COUNT(c) FROM Cuota c GROUP BY c.estado")
     List<Object[]> countByEstado();
+
+    // Cuotas por usuario
+    @Query("SELECT c FROM Cuota c WHERE c.planPago.transaccion.usuario.usuarioId = :usuarioId")
+    List<Cuota> findByUsuarioId(@Param("usuarioId") Long usuarioId);
+
+    // Próxima cuota a vencer por plan
+    @Query("SELECT c FROM Cuota c WHERE c.planPago.planPagoId = :planPagoId AND c.estado = 'PENDIENTE' " +
+            "ORDER BY c.fechaVencimiento ASC LIMIT 1")
+    Optional<Cuota> findProximaCuotaPorVencer(@Param("planPagoId") Long planPagoId);
 }

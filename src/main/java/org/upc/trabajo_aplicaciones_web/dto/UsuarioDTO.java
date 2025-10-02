@@ -1,25 +1,29 @@
 package org.upc.trabajo_aplicaciones_web.dto;
 
 import lombok.Data;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 public class UsuarioDTO {
-    private Long id;
+    private Long usuarioId;
     private String nombre;
     private String apellido;
     private String email;
     private String telefono;
     private String passwordHash;
     private Boolean estado = true;
+    private LocalDateTime createdAt;
+
+    // Para creación/actualización
     private List<Long> rolesIds = new ArrayList<>();
 
-    // Para respuestas con datos completos
+    // Para respuestas
     private List<RolDTO> roles = new ArrayList<>();
     private List<ComercioDTO> comercios = new ArrayList<>();
+    private List<WalletDTO> wallets = new ArrayList<>();
 
-    // Constructor para creación básica
     public UsuarioDTO() {}
 
     public UsuarioDTO(String nombre, String apellido, String email, String telefono) {
@@ -28,7 +32,4 @@ public class UsuarioDTO {
         this.email = email;
         this.telefono = telefono;
     }
-    // VERSION
-    //Nota de version 1 de octubre
-    //comentario nuevo
 }

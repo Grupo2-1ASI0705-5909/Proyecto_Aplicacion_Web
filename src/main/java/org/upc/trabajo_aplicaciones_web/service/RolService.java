@@ -27,6 +27,7 @@ public class RolService {
 
         Rol rol = modelMapper.map(rolDTO, Rol.class);
 
+        // Asignar permisos si se proporcionan
         if (rolDTO.getPermisosIds() != null && !rolDTO.getPermisosIds().isEmpty()) {
             List<Permiso> permisos = permisoRepository.findAllById(rolDTO.getPermisosIds());
             rol.setPermisos(permisos);
@@ -62,6 +63,7 @@ public class RolService {
         rolExistente.setNombre(rolDTO.getNombre());
         rolExistente.setDescripcion(rolDTO.getDescripcion());
 
+        // Actualizar permisos si se proporcionan
         if (rolDTO.getPermisosIds() != null) {
             List<Permiso> permisos = permisoRepository.findAllById(rolDTO.getPermisosIds());
             rolExistente.setPermisos(permisos);

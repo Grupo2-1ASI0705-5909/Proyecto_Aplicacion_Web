@@ -72,7 +72,7 @@ public class PlanPagoService {
     }
 
     public List<PlanPagoDTO> obtenerPorTransaccion(Long transaccionId) {
-        return planPagoRepository.findByTransaccionId(transaccionId)
+        return planPagoRepository.findByTransaccionTransaccionId(transaccionId)
                 .stream()
                 .map(plan -> modelMapper.map(plan, PlanPagoDTO.class))
                 .collect(Collectors.toList());
@@ -92,8 +92,21 @@ public class PlanPagoService {
                 .collect(Collectors.toList());
     }
 
+    public List<PlanPagoDTO> obtenerPorUsuario(Long usuarioId) {
+        return planPagoRepository.findByUsuarioId(usuarioId)
+                .stream()
+                .map(plan -> modelMapper.map(plan, PlanPagoDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    public List<PlanPagoDTO> obtenerPlanesConCuotasPendientes() {
+        return planPagoRepository.findPlanesConCuotasPendientes()
+                .stream()
+                .map(plan -> modelMapper.map(plan, PlanPagoDTO.class))
+                .collect(Collectors.toList());
+    }
+
     public Double calcularInteresTotal() {
-        Double interesTotal = planPagoRepository.calcularInteresTotal();
-        return interesTotal != null ? interesTotal : 0.0;
+        return planPagoRepository.calcularInteresTotal();
     }
 }

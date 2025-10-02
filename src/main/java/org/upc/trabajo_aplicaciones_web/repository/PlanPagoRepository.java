@@ -13,7 +13,7 @@ import java.util.List;
 public interface PlanPagoRepository extends JpaRepository<PlanPago, Long> {
 
     // Buscar por transacción
-    List<PlanPago> findByTransaccionId(Long transaccionId);
+    List<PlanPago> findByTransaccionTransaccionId(Long transaccionId);
 
     // Buscar planes que vencen en una fecha específica
     List<PlanPago> findByFechaFin(LocalDate fechaFin);
@@ -30,6 +30,14 @@ public interface PlanPagoRepository extends JpaRepository<PlanPago, Long> {
     List<PlanPago> findByFechaInicioBetween(LocalDate fechaInicio, LocalDate fechaFin);
 
     // Calcular interés total generado
-    @Query("SELECT SUM(p.interes) FROM PlanPago p")
+    @Query("SELECT COALESCE(SUM(p.interes), 0) FROM PlanPago p")
     Double calcularInteresTotal();
+
+    // Planes con cuotas pendientes
+    @Query("SELECT DISTINCT p FROM PlanPago p JOIN p.cuotas c WHERE c.estado = 'PENDIENTE'")
+    List<PlanPago> findPlanesConCuotasPendientes();
+
+    // Planes por usuario
+    @Query("SELECT p FROM PlanPago p WHERE p.transaccion.usuario.usuarioId = :usuarioId")
+    List<PlanPago> findByUsuarioId(@Param("usuarioId") Long usuarioId);
 }

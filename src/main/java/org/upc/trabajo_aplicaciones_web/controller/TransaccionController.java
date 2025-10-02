@@ -70,9 +70,27 @@ public class TransaccionController {
         return ResponseEntity.ok(transacciones);
     }
 
-    @GetMapping("/usuario/{usuarioId}/total")
-    public ResponseEntity<Double> calcularTotalPorUsuario(@PathVariable Long usuarioId) {
-        Double total = transaccionService.calcularTotalPorUsuario(usuarioId);
+    @GetMapping("/cripto")
+    public ResponseEntity<List<TransaccionDTO>> obtenerTransaccionesConCripto() {
+        List<TransaccionDTO> transacciones = transaccionService.obtenerTransaccionesConCripto();
+        return ResponseEntity.ok(transacciones);
+    }
+
+    @GetMapping("/usuario/{usuarioId}/total-fiat")
+    public ResponseEntity<Double> calcularTotalFiatPorUsuario(@PathVariable Long usuarioId) {
+        Double total = transaccionService.calcularTotalFiatPorUsuario(usuarioId);
         return ResponseEntity.ok(total);
+    }
+
+    @GetMapping("/usuario/{usuarioId}/total-cripto")
+    public ResponseEntity<Double> calcularTotalCriptoPorUsuario(@PathVariable Long usuarioId) {
+        Double total = transaccionService.calcularTotalCriptoPorUsuario(usuarioId);
+        return ResponseEntity.ok(total);
+    }
+
+    @GetMapping("/recientes")
+    public ResponseEntity<List<TransaccionDTO>> obtenerRecientes() {
+        List<TransaccionDTO> transacciones = transaccionService.obtenerRecientes();
+        return ResponseEntity.ok(transacciones);
     }
 }

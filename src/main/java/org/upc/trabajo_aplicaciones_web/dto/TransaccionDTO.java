@@ -6,11 +6,17 @@ import java.time.LocalDateTime;
 
 @Data
 public class TransaccionDTO {
-    private Long id;
+    private Long transaccionId;
     private Long usuarioId;
     private Long comercioId;
     private Long metodoPagoId;
-    private BigDecimal montoTotal;
+    private Long criptoId;
+    private Long tipoCambioId;
+    private String codigoMoneda;
+    private BigDecimal montoTotalFiat;
+    private BigDecimal montoTotalCripto;
+    private BigDecimal tasaAplicada;
+    private String txHash;
     private LocalDateTime fechaTransaccion;
     private String estado = "PENDIENTE";
 
@@ -18,12 +24,14 @@ public class TransaccionDTO {
     private UsuarioDTO usuario;
     private ComercioDTO comercio;
     private MetodoPagoDTO metodoPago;
+    private CriptomonedaDTO criptomoneda;
+    private TipoCambioDTO tipoCambio;
     private PlanPagoDTO planPago;
 
     public TransaccionDTO() {}
 
-    public TransaccionDTO(BigDecimal montoTotal, String estado) {
-        this.montoTotal = montoTotal;
+    public TransaccionDTO(BigDecimal montoTotalFiat, String estado) {
+        this.montoTotalFiat = montoTotalFiat;
         this.estado = estado;
         this.fechaTransaccion = LocalDateTime.now();
     }

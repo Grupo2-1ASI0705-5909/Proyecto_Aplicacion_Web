@@ -19,7 +19,7 @@ public interface ComercioRepository extends JpaRepository<Comercio, Long> {
     boolean existsByRuc(String ruc);
 
     // Buscar por usuario
-    List<Comercio> findByUsuarioId(Long usuarioId);
+    List<Comercio> findByUsuarioUsuarioId(Long usuarioId);
 
     // Buscar por estado
     List<Comercio> findByEstado(Boolean estado);
@@ -31,9 +31,14 @@ public interface ComercioRepository extends JpaRepository<Comercio, Long> {
     List<Comercio> findByNombreComercialContainingIgnoreCase(String nombreComercial);
 
     // Buscar comercios activos por usuario
-    List<Comercio> findByUsuarioIdAndEstadoTrue(Long usuarioId);
+    List<Comercio> findByUsuarioUsuarioIdAndEstadoTrue(Long usuarioId);
 
     // Contar comercios por categoría
     @Query("SELECT c.categoria, COUNT(c) FROM Comercio c GROUP BY c.categoria")
     List<Object[]> countByCategoria();
+
+    // Buscar comercios con transacciones recientes
+    @Query("SELECT c FROM Comercio c WHERE c.comercioId IN " +
+            "(SELECT t.comercio.comercioId FROM Transaccion t WHERE t.fechaTransaccion >= CURRENT_DATE - 30)")
+    List<Comercio> findConTransaccionesRecientes();
 }

@@ -19,10 +19,10 @@ public interface RolRepository extends JpaRepository<Rol, Long> {
     boolean existsByNombre(String nombre);
 
     // Buscar roles por usuario
-    @Query("SELECT r FROM Rol r JOIN r.usuarios u WHERE u.id = :usuarioId")
+    @Query("SELECT r FROM Rol r JOIN r.usuarios u WHERE u.usuarioId = :usuarioId")
     List<Rol> findByUsuarioId(@Param("usuarioId") Long usuarioId);
 
-    // Buscar roles con permisos específicos
-    @Query("SELECT r FROM Rol r JOIN r.permisos p WHERE p.id = :permisoId")
-    List<Rol> findByPermisoId(@Param("permisoId") Long permisoId);
+    // Buscar roles con permisos
+    @Query("SELECT r FROM Rol r LEFT JOIN FETCH r.permisos WHERE r.rolId = :rolId")
+    Optional<Rol> findWithPermisosById(@Param("rolId") Long rolId);
 }

@@ -77,6 +77,18 @@ public class CuotaController {
         return ResponseEntity.ok(cuotas);
     }
 
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<CuotaDTO>> obtenerPorUsuario(@PathVariable Long usuarioId) {
+        List<CuotaDTO> cuotas = cuotaService.obtenerPorUsuario(usuarioId);
+        return ResponseEntity.ok(cuotas);
+    }
+
+    @GetMapping("/plan-pago/{planPagoId}/proxima")
+    public ResponseEntity<CuotaDTO> obtenerProximaCuotaPorVencer(@PathVariable Long planPagoId) {
+        CuotaDTO cuota = cuotaService.obtenerProximaCuotaPorVencer(planPagoId);
+        return ResponseEntity.ok(cuota);
+    }
+
     @GetMapping("/plan-pago/{planPagoId}/total-pendiente")
     public ResponseEntity<Double> calcularTotalPendiente(@PathVariable Long planPagoId) {
         Double total = cuotaService.calcularTotalPendientePorPlan(planPagoId);

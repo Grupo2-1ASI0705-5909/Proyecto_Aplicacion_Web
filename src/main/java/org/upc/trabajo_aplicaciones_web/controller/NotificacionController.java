@@ -81,4 +81,10 @@ public class NotificacionController {
         long cantidad = notificacionService.contarNoLeidasPorUsuario(usuarioId);
         return ResponseEntity.ok(cantidad);
     }
+
+    @GetMapping("/tipo/{tipo}")
+    public ResponseEntity<List<NotificacionDTO>> obtenerPorTipo(@PathVariable String tipo) {
+        List<NotificacionDTO> notificaciones = notificacionService.obtenerPorTipo(tipo);
+        return ResponseEntity.ok(notificaciones);
+    }
 }

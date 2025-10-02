@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class PermisoDTO {
-    private Long id;
+    private Long permisoId;
     private String nombre;
     private String descripcion;
 

@@ -1,16 +1,18 @@
 package org.upc.trabajo_aplicaciones_web.dto;
 
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Data
-public class    ComercioDTO {
-    private Long id;
+public class ComercioDTO {
+    private Long comercioId;
     private Long usuarioId;
     private String nombreComercial;
     private String ruc;
     private String direccion;
     private String categoria;
     private Boolean estado = true;
+    private LocalDateTime createdAt;
 
     // Para respuestas
     private UsuarioDTO usuario;
@@ -23,7 +25,4 @@ public class    ComercioDTO {
         this.direccion = direccion;
         this.categoria = categoria;
     }
-    //Notas
-    // version estable
-
 }

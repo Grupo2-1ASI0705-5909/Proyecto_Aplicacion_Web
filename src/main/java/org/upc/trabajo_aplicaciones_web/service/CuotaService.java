@@ -98,7 +98,7 @@ public class CuotaService {
     }
 
     public List<CuotaDTO> obtenerPorPlanPago(Long planPagoId) {
-        return cuotaRepository.findByPlanPagoId(planPagoId)
+        return cuotaRepository.findByPlanPagoPlanPagoId(planPagoId)
                 .stream()
                 .map(cuota -> {
                     CuotaDTO dto = modelMapper.map(cuota, CuotaDTO.class);
@@ -144,8 +144,28 @@ public class CuotaService {
                 .collect(Collectors.toList());
     }
 
+    public List<CuotaDTO> obtenerPorUsuario(Long usuarioId) {
+        return cuotaRepository.findByUsuarioId(usuarioId)
+                .stream()
+                .map(cuota -> {
+                    CuotaDTO dto = modelMapper.map(cuota, CuotaDTO.class);
+                    dto.setVencida(cuota.estaVencida());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public CuotaDTO obtenerProximaCuotaPorVencer(Long planPagoId) {
+        Cuota cuota = cuotaRepository.findProximaCuotaPorVencer(planPagoId)
+                .orElseThrow(() -> new RuntimeException("No hay cuotas pendientes"));
+
+        CuotaDTO dto = modelMapper.map(cuota, CuotaDTO.class);
+        dto.setVencida(cuota.estaVencida());
+
+        return dto;
+    }
+
     public Double calcularTotalPendientePorPlan(Long planPagoId) {
-        Double total = cuotaRepository.calcularTotalPendientePorPlan(planPagoId);
-        return total != null ? total : 0.0;
+        return cuotaRepository.calcularTotalPendientePorPlan(planPagoId);
     }
 }
