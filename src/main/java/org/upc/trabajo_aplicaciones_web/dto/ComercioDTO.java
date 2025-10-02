@@ -3,7 +3,7 @@ package org.upc.trabajo_aplicaciones_web.dto;
 import lombok.Data;
 
 @Data
-public class ComercioDTO {
+public class    ComercioDTO {
     private Long id;
     private Long usuarioId;
     private String nombreComercial;
@@ -23,4 +23,5 @@ public class ComercioDTO {
         this.direccion = direccion;
         this.categoria = categoria;
     }
+    //Notas
 }
