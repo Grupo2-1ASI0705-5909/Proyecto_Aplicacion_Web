@@ -29,4 +29,8 @@ public class UsuarioDTO {
         this.telefono = telefono;
     }
     //Nota de version 1 de octubre
+
+    //Nota prueba David
+
+    //Nota Prueba David 2.0
 }
