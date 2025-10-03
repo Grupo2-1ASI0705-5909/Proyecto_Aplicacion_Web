@@ -26,4 +26,5 @@ public class MetodoPago {
     // RELACIONES
     @OneToMany(mappedBy = "metodoPago", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaccion> transacciones = new ArrayList<>();
+    //vercion 3/10
 }
