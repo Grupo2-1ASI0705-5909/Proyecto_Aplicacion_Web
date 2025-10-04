@@ -87,4 +87,6 @@ public class PermisoService {
         dto.setDescripcion(permiso.getDescripcion());
         return dto;
     }
+    //version 3/10/25
+
 }
