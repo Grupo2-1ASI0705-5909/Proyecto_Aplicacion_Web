@@ -69,4 +69,6 @@ public class CriptomonedaController {
         List<CriptomonedaDTO> criptos = criptomonedaService.buscarPorNombre(nombre);
         return ResponseEntity.ok(criptos);
     }
+    //vercion 3/10
+
 }
