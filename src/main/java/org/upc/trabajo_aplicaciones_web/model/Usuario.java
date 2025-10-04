@@ -57,4 +57,8 @@ public class Usuario {
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notificacion> notificaciones = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "rolId", nullable = false) // FK en usuario
+    private Rol rol;
 }
