@@ -43,7 +43,6 @@ public class TipoCambioController {
         return ResponseEntity.ok(promedio);
     }
 
-    // ========== ADMINISTRADOR Y COMERCIO ==========
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'COMERCIO')")
     @GetMapping("/historial")
     public ResponseEntity<List<TipoCambioDTO>> obtenerHistorialTasas(@RequestParam String desde, @RequestParam String hasta) {
@@ -51,7 +50,6 @@ public class TipoCambioController {
         return ResponseEntity.ok(tiposCambio);
     }
 
-    // ========== TODOS LOS ROLES AUTENTICADOS ==========
     @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResponseEntity<List<TipoCambioDTO>> obtenerTodos() {
