@@ -25,7 +25,6 @@ public class UsuarioController {
         return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
     }
 
-    // ========== SOLO ADMINISTRADOR ==========
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping
     public ResponseEntity<List<UsuarioDTO>> obtenerTodos() {
@@ -68,7 +67,6 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarios);
     }
 
-    // ========== ADMINISTRADOR Y USUARIO (PROPIO) ==========
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'USUARIO', 'COMERCIO')")
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioDTO> obtenerPorId(@PathVariable Long id) {
