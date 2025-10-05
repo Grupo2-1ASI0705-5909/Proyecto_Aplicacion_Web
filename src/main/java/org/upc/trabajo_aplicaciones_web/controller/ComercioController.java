@@ -38,7 +38,6 @@ public class ComercioController {
         return ResponseEntity.ok(comercio);
     }
 
-    // ========== ADMINISTRADOR Y COMERCIO ==========
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'COMERCIO')")
     @PutMapping("/{id}")
     public ResponseEntity<ComercioDTO> actualizar(@PathVariable Long id, @RequestBody ComercioDTO comercioDTO) {
@@ -53,7 +52,6 @@ public class ComercioController {
         return ResponseEntity.ok(comercios);
     }
 
-    // ========== TODOS LOS ROLES (PÚBLICO) ==========
     @PreAuthorize("permitAll()")
     @GetMapping
     public ResponseEntity<List<ComercioDTO>> obtenerTodos() {
