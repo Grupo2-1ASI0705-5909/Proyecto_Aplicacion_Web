@@ -53,7 +53,6 @@ public class WalletController {
         return ResponseEntity.ok(wallets);
     }
 
-    // ========== ADMINISTRADOR Y USUARIO ==========
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'USUARIO')")
     @PostMapping
     public ResponseEntity<WalletDTO> crear(@RequestBody WalletDTO walletDTO) {
