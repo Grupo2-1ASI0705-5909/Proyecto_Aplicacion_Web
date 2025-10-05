@@ -52,7 +52,6 @@ public class MetodoPagoController {
         return ResponseEntity.ok(cantidad);
     }
 
-    // ========== TODOS LOS ROLES AUTENTICADOS ==========
     @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResponseEntity<List<MetodoPagoDTO>> obtenerTodos() {
