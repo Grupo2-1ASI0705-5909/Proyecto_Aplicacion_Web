@@ -24,4 +24,6 @@ public class ComercioDTO {
         this.direccion = direccion;
         this.categoria = categoria;
     }
+
+    //Comentario
 }
