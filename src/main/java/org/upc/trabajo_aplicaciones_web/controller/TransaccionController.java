@@ -45,7 +45,6 @@ public class TransaccionController {
         return ResponseEntity.ok(transacciones);
     }
 
-    // ========== ADMINISTRADOR Y USUARIO ==========
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'USUARIO')")
     @PostMapping
     public ResponseEntity<TransaccionDTO> crear(@RequestBody TransaccionDTO transaccionDTO) {
@@ -74,7 +73,6 @@ public class TransaccionController {
         return ResponseEntity.ok(total);
     }
 
-    // ========== ADMINISTRADOR Y COMERCIO ==========
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'COMERCIO')")
     @GetMapping("/comercio/{comercioId}")
     public ResponseEntity<List<TransaccionDTO>> obtenerPorComercio(@PathVariable Long comercioId) {
@@ -96,7 +94,6 @@ public class TransaccionController {
         return ResponseEntity.ok(transaccion);
     }
 
-    // ========== TODOS LOS ROLES AUTENTICADOS ==========
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public ResponseEntity<TransaccionDTO> obtenerPorId(@PathVariable Long id) {
