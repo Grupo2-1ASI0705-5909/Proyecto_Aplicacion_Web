@@ -46,7 +46,6 @@ public class CuotaController {
         return ResponseEntity.ok(cuotas);
     }
 
-    // ========== ADMINISTRADOR Y USUARIO ==========
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'USUARIO')")
     @PatchMapping("/{id}/pagar")
     public ResponseEntity<CuotaDTO> pagarCuota(@PathVariable Long id) {
@@ -75,7 +74,6 @@ public class CuotaController {
         return ResponseEntity.ok(total);
     }
 
-    // ========== ADMINISTRADOR Y COMERCIO ==========
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'COMERCIO')")
     @PutMapping("/{id}")
     public ResponseEntity<CuotaDTO> actualizar(@PathVariable Long id, @RequestBody CuotaDTO cuotaDTO) {
@@ -90,7 +88,6 @@ public class CuotaController {
         return ResponseEntity.ok(cuotas);
     }
 
-    // ========== TODOS LOS ROLES AUTENTICADOS ==========
     @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResponseEntity<List<CuotaDTO>> obtenerTodos() {
