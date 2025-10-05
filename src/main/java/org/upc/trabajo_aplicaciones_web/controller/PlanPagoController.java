@@ -52,7 +52,6 @@ public class PlanPagoController {
         return ResponseEntity.ok(interesTotal);
     }
 
-    // ========== ADMINISTRADOR Y USUARIO ==========
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'USUARIO')")
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<PlanPagoDTO>> obtenerPorUsuario(@PathVariable Long usuarioId) {
@@ -60,7 +59,6 @@ public class PlanPagoController {
         return ResponseEntity.ok(planes);
     }
 
-    // ========== ADMINISTRADOR Y COMERCIO ==========
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'COMERCIO')")
     @PutMapping("/{id}")
     public ResponseEntity<PlanPagoDTO> actualizar(@PathVariable Long id, @RequestBody PlanPagoDTO planPagoDTO) {
@@ -75,7 +73,6 @@ public class PlanPagoController {
         return ResponseEntity.ok(planes);
     }
 
-    // ========== TODOS LOS ROLES AUTENTICADOS ==========
     @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResponseEntity<List<PlanPagoDTO>> obtenerTodos() {
