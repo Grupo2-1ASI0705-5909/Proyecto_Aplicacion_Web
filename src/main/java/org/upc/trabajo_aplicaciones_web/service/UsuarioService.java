@@ -1,8 +1,8 @@
 package org.upc.trabajo_aplicaciones_web.service;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
+import org.upc.trabajo_aplicaciones_web.dto.RolDTO;
 import org.upc.trabajo_aplicaciones_web.dto.UsuarioDTO;
 import org.upc.trabajo_aplicaciones_web.model.Rol;
 import org.upc.trabajo_aplicaciones_web.model.Usuario;
@@ -11,7 +11,6 @@ import org.upc.trabajo_aplicaciones_web.repository.UsuarioRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,9 +31,16 @@ public class UsuarioService {
         usuario.setPasswordHash(usuarioDTO.getPasswordHash());
         usuario.setEstado(usuarioDTO.getEstado() != null ? usuarioDTO.getEstado() : true);
 
-        if (usuarioDTO.getRolesIds() != null && !usuarioDTO.getRolesIds().isEmpty()) {
-            List<Rol> roles = rolRepository.findAllById(usuarioDTO.getRolesIds());
-            usuario.setRoles(roles);
+        // ✅ Asignar el rol único
+        if (usuarioDTO.getRolId() != null) {
+            Rol rol = rolRepository.findById(usuarioDTO.getRolId())
+                    .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+            usuario.setRol(rol);
+        } else {
+            // ✅ Cambio: Buscar rol "USUARIO" en lugar de "USER"
+            Rol rolDefault = rolRepository.findByNombre("USUARIO")
+                    .orElseThrow(() -> new RuntimeException("Rol USUARIO no encontrado en la base de datos"));
+            usuario.setRol(rolDefault);
         }
 
         usuario = usuarioRepository.save(usuario);
@@ -71,9 +77,11 @@ public class UsuarioService {
         usuarioExistente.setTelefono(usuarioDTO.getTelefono());
         usuarioExistente.setEstado(usuarioDTO.getEstado());
 
-        if (usuarioDTO.getRolesIds() != null) {
-            List<Rol> roles = rolRepository.findAllById(usuarioDTO.getRolesIds());
-            usuarioExistente.setRoles(roles);
+        // ✅ Actualizar rol si se proporciona
+        if (usuarioDTO.getRolId() != null) {
+            Rol rol = rolRepository.findById(usuarioDTO.getRolId())
+                    .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+            usuarioExistente.setRol(rol);
         }
 
         usuarioExistente = usuarioRepository.save(usuarioExistente);
@@ -118,7 +126,7 @@ public class UsuarioService {
     }
 
     public List<UsuarioDTO> obtenerPorRol(Long rolId) {
-        List<Usuario> usuarios = usuarioRepository.findByRolId(rolId);
+        List<Usuario> usuarios = usuarioRepository.findByRolRolId(rolId);
         List<UsuarioDTO> usuarioDTOs = new ArrayList<>();
         for (Usuario usuario : usuarios) {
             usuarioDTOs.add(convertirAUsuarioDTO(usuario));
@@ -126,6 +134,7 @@ public class UsuarioService {
         return usuarioDTOs;
     }
 
+    // ✅ MÉTODO DE CONVERSIÓN ACTUALIZADO
     private UsuarioDTO convertirAUsuarioDTO(Usuario usuario) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setUsuarioId(usuario.getUsuarioId());
@@ -137,12 +146,16 @@ public class UsuarioService {
         dto.setEstado(usuario.getEstado());
         dto.setCreatedAt(usuario.getCreatedAt());
 
-        // Convertir roles a IDs
-        List<Long> rolesIds = new ArrayList<>();
-        for (Rol rol : usuario.getRoles()) {
-            rolesIds.add(rol.getRolId());
+        // ✅ Convertir el rol único
+        if (usuario.getRol() != null) {
+            dto.setRolId(usuario.getRol().getRolId());
+
+            RolDTO rolDTO = new RolDTO();
+            rolDTO.setRolId(usuario.getRol().getRolId());
+            rolDTO.setNombre(usuario.getRol().getNombre());
+            rolDTO.setDescripcion(usuario.getRol().getDescripcion());
+            dto.setRol(rolDTO);
         }
-        dto.setRolesIds(rolesIds);
 
         return dto;
     }

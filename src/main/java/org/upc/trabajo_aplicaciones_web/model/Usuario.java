@@ -36,16 +36,12 @@ public class Usuario {
     @Column(nullable = false, name = "createdat")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // RELACIONES MANY TO MANY - SIN ENTIDAD INTERMEDIA
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "usuariorol",
-            joinColumns = @JoinColumn(name = "usuarioid"),
-            inverseJoinColumns = @JoinColumn(name = "rolid")
-    )
-    private List<Rol> roles = new ArrayList<>();
+    // ✅ RELACIÓN MANY-TO-ONE: Muchos usuarios tienen un rol
+    @ManyToOne(fetch = FetchType.EAGER) // EAGER para cargar el rol automáticamente con el usuario
+    @JoinColumn(name = "rolid", nullable = false) // Columna FK en la tabla usuarios
+    private Rol rol;
 
-    // RELACIONES ONE TO MANY
+    // RELACIONES ONE TO MANY (sin cambios)
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comercio> comercios = new ArrayList<>();
 
@@ -57,8 +53,4 @@ public class Usuario {
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notificacion> notificaciones = new ArrayList<>();
-
-    @ManyToOne
-    @JoinColumn(name = "rolId", nullable = false) // FK en usuario
-    private Rol rol;
 }

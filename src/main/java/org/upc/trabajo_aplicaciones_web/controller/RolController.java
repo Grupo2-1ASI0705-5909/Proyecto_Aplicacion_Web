@@ -52,9 +52,4 @@ public class        RolController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List<RolDTO>> obtenerRolesPorUsuario(@PathVariable Long usuarioId) {
-        List<RolDTO> roles = rolService.obtenerRolesPorUsuario(usuarioId);
-        return ResponseEntity.ok(roles);
-    }
 }

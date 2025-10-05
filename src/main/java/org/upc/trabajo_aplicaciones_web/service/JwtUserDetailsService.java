@@ -31,7 +31,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         if (rol != null && rol.getNombre() != null && !rol.getNombre().isBlank()) {
             authorities.add(new SimpleGrantedAuthority("ROLE_" + rol.getNombre().trim().toUpperCase()));
         } else {
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            authorities.add(new SimpleGrantedAuthority("ROLE_Usuario"));
         }
 
         // Si manejas cuenta deshabilitada/bloqueada/expirada, pásalos aquí:

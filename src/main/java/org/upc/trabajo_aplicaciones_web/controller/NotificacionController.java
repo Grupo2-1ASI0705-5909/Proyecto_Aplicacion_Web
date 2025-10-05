@@ -2,6 +2,7 @@ package org.upc.trabajo_aplicaciones_web.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import org.upc.trabajo_aplicaciones_web.dto.NotificacionDTO;
@@ -16,6 +17,7 @@ public class NotificacionController {
 
     private final NotificacionService notificacionService;
 
+    @PreAuthorize("hasRole('USUARIO')")
     @PostMapping
     public ResponseEntity<NotificacionDTO> crear(@RequestBody NotificacionDTO notificacionDTO) {
         NotificacionDTO nuevaNotificacion = notificacionService.crear(notificacionDTO);
