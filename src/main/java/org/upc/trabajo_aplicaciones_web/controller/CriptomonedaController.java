@@ -45,7 +45,6 @@ public class CriptomonedaController {
         return ResponseEntity.ok(cripto);
     }
 
-    // ========== TODOS LOS ROLES AUTENTICADOS ==========
     @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResponseEntity<List<CriptomonedaDTO>> obtenerTodos() {
