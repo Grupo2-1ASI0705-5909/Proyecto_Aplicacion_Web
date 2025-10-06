@@ -72,4 +72,6 @@ public class MetodoPagoController {
         List<MetodoPagoDTO> metodos = metodoPagoService.obtenerActivos();
         return ResponseEntity.ok(metodos);
     }
+
+    //Seguridad implementada
 }
