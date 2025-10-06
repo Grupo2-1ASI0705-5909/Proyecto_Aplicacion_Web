@@ -26,14 +26,14 @@ public class ComercioController {
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<void> eliminar(@PathVariable long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         comercioService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PatchMapping("/{id}/estado")
-    public ResponseEntity<ComercioDTO> cambiarEstado(@PathVariable long id, @RequestParam Boolean estado) {
+    public ResponseEntity<ComercioDTO> cambiarEstado(@PathVariable Long id, @RequestParam Boolean estado) {
         ComercioDTO comercio = comercioService.cambiarEstado(id, estado);
         return ResponseEntity.ok(comercio);
     }
@@ -93,6 +93,4 @@ public class ComercioController {
         List<ComercioDTO> comercios = comercioService.obtenerActivos();
         return ResponseEntity.ok(comercios);
     }
-    //vercion 5/10/25
-
 }
