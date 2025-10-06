@@ -17,6 +17,8 @@ public class MetodoPagoController {
 
     private final MetodoPagoService metodoPagoService;
 
+    //David MetodoPagoController
+
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping
     public ResponseEntity<MetodoPagoDTO> crear(@RequestBody MetodoPagoDTO metodoPagoDTO) {
@@ -73,5 +75,4 @@ public class MetodoPagoController {
         return ResponseEntity.ok(metodos);
     }
 
-    //Seguridad implementada
 }
