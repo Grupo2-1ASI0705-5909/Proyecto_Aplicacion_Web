@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+//actualizacion
 public class WalletService {
-
     private final WalletRepository walletRepository;
     private final UsuarioRepository usuarioRepository;
     private final CriptomonedaRepository criptomonedaRepository;
@@ -146,4 +146,5 @@ public class WalletService {
         dto.setUltimaActualizacion(wallet.getUltimaActualizacion());
         return dto;
     }
+
 }
