@@ -20,7 +20,7 @@ public class Rol {
     @Column(nullable = false, length = 200)
     private String descripcion;
 
-    // ✅ RELACIÓN ONE-TO-MANY: Un rol puede ser asignado a muchos usuarios
+    // relacio de un rol a muchos usuarios, quitando la tabla de permisos
     @OneToMany(mappedBy = "rol", fetch = FetchType.LAZY)
     private List<Usuario> usuarios = new ArrayList<>();
 }
