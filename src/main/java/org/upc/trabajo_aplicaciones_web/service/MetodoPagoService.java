@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 public class MetodoPagoService {
     private final MetodoPagoRepository metodoPagoRepository;
 
+    //David MetodoPagoService
+
     public MetodoPagoDTO crear(MetodoPagoDTO metodoPagoDTO) {
         if (metodoPagoRepository.existsByNombre(metodoPagoDTO.getNombre())) {
             throw new RuntimeException("El método de pago ya existe");
