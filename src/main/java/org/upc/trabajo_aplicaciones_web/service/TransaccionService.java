@@ -14,7 +14,9 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+//actualizacion
 public class TransaccionService {
+
     private final TransaccionRepository transaccionRepository;
     private final UsuarioRepository usuarioRepository;
     private final ComercioRepository comercioRepository;
