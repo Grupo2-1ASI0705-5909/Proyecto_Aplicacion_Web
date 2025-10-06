@@ -14,3 +14,7 @@ import java.util.List;
 @RequestMapping("/api/planes-pago")
 @RequiredArgsConstructor
 
+public class PlanPagoController {
+
+
+}
