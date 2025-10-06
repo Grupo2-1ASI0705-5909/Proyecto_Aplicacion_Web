@@ -108,4 +108,7 @@ public class TransaccionController {
         List<TransaccionDTO> transacciones = transaccionService.obtenerPorEstado(estado);
         return ResponseEntity.ok(transacciones);
     }
+
+
+
 }
