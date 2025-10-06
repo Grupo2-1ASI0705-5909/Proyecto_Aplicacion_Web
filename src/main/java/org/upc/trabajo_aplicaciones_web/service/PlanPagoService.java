@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PlanPagoService {
+    //actualizado
     private final PlanPagoRepository planPagoRepository;
     private final TransaccionRepository transaccionRepository;
 
