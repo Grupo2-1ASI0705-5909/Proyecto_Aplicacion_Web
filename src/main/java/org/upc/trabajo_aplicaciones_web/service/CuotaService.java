@@ -20,6 +20,8 @@ public class CuotaService {
     private final CuotaRepository cuotaRepository;
     private final PlanPagoRepository planPagoRepository;
 
+    //David CuotaService
+
     public CuotaDTO crear(CuotaDTO cuotaDTO) {
         PlanPago planPago = planPagoRepository.findById(cuotaDTO.getPlanPagoId())
                 .orElseThrow(() -> new RuntimeException("Plan de pago no encontrado"));
