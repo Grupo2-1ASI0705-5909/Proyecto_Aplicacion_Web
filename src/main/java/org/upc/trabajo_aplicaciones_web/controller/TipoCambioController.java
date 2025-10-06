@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tipos-cambio")
 @RequiredArgsConstructor
+//actualizado
 public class TipoCambioController {
 
     private final TipoCambioService tipoCambioService;

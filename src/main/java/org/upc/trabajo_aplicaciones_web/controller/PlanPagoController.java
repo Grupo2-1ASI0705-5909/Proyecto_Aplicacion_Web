@@ -13,8 +13,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/planes-pago")
 @RequiredArgsConstructor
+
 public class PlanPagoController {
 
+    //actualizacion
     private final PlanPagoService planPagoService;
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")

@@ -17,7 +17,7 @@ public class ComercioDTO {
     // Para respuestas
 
     public ComercioDTO() {}
-
+    //Actualizacion de variables
     public ComercioDTO(String nombreComercial, String ruc, String direccion, String categoria) {
         this.nombreComercial = nombreComercial;
         this.ruc = ruc;

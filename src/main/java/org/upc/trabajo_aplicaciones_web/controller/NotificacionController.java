@@ -23,6 +23,7 @@ public class NotificacionController {
         NotificacionDTO nuevaNotificacion = notificacionService.crear(notificacionDTO);
         return new ResponseEntity<>(nuevaNotificacion, HttpStatus.CREATED);
     }
+
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping
     public ResponseEntity<List<NotificacionDTO>> obtenerTodos() {
