@@ -20,6 +20,8 @@ public class NotificacionService {
     private final NotificacionRepository notificacionRepository;
     private final UsuarioRepository usuarioRepository;
 
+    //David NotificacionService
+
     public NotificacionDTO crear(NotificacionDTO notificacionDTO) {
         Usuario usuario = usuarioRepository.findById(notificacionDTO.getUsuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
