@@ -18,12 +18,7 @@ public class ComercioDTO {
 
     public ComercioDTO() {}
 
-    public ComercioDTO(String nombreComercial, String ruc, String direccion, String categoria) {
-        this.nombreComercial = nombreComercial;
-        this.ruc = ruc;
-        this.direccion = direccion;
-        this.categoria = categoria;
-    }
+
 
     //Comentario
     //Comentario 2
