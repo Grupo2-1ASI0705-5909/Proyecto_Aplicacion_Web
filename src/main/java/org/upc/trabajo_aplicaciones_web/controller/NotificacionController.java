@@ -17,6 +17,8 @@ public class NotificacionController {
 
     private final NotificacionService notificacionService;
 
+    //David NotificacionController
+
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping
     public ResponseEntity<NotificacionDTO> crear(@RequestBody NotificacionDTO notificacionDTO) {
@@ -90,4 +92,5 @@ public class NotificacionController {
         List<NotificacionDTO> notificaciones = notificacionService.obtenerPorTipo(tipo);
         return ResponseEntity.ok(notificaciones);
     }
+
 }
