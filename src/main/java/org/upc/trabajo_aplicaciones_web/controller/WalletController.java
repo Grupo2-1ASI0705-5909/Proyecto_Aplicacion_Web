@@ -15,7 +15,6 @@ import java.util.List;
 @RequestMapping("/api/wallets")
 @RequiredArgsConstructor
 public class WalletController {
-
     private final WalletService walletService;
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
