@@ -9,7 +9,7 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import java.io.IOException;
 import java.io.Serializable;
-
+//empezando seguridad
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
     private static final long serialVersionUID = -7858869558953243875L;
