@@ -11,6 +11,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+
+//actualizado
 public class RolService {
     private final RolRepository rolRepository;
 
