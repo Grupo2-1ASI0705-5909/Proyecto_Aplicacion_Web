@@ -17,36 +17,38 @@ import org.upc.trabajo_aplicaciones_web.securities.JwtTokenUtil;
 import org.upc.trabajo_aplicaciones_web.service.JwtUserDetailsService;
 
 @RestController
+
+    //David AuthenticationController
     @CrossOrigin
     public class JwtAuthenticationController {
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-        @Autowired
-        private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
-        @Autowired
-        private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private JwtUserDetailsService userDetailsService;
 
-        @Autowired
-        private JwtUserDetailsService userDetailsService;
+    @PostMapping("/login")
+    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest req) throws Exception {
+        authenticate(req.getEmail(), req.getPasswordHash());
 
-        @PostMapping("/login")
-        public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest req) throws Exception {
-            authenticate(req.getEmail(), req.getPasswordHash());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(req.getEmail());
+        final String token = jwtTokenUtil.generateToken(userDetails);
 
-            final UserDetails userDetails = userDetailsService.loadUserByUsername(req.getEmail());
-            final String token = jwtTokenUtil.generateToken(userDetails);
-
-            return ResponseEntity.ok(new JwtResponse(token));
-        }
+        return ResponseEntity.ok(new JwtResponse(token));
+    }
 
 
-        private void authenticate(String email, String passwordHash) throws Exception {
-            try {
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, passwordHash));
-            } catch (DisabledException e) {
-                throw new Exception("USUARIO_DESHABILITADO", e);
-            } catch (BadCredentialsException e) {
-                throw new Exception("CREDENCIALES_INVALIDAS", e);
-            }
+    private void authenticate(String email, String passwordHash) throws Exception {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, passwordHash));
+        } catch (DisabledException e) {
+            throw new Exception("USUARIO_DESHABILITADO", e);
+        } catch (BadCredentialsException e) {
+            throw new Exception("CREDENCIALES_INVALIDAS", e);
         }
     }
+
+}
