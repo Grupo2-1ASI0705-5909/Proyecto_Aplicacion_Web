@@ -109,6 +109,4 @@ public class TransaccionController {
         return ResponseEntity.ok(transacciones);
     }
 
-
-
 }
