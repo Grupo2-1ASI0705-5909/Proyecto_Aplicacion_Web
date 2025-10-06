@@ -75,6 +75,4 @@ public class MetodoPagoController {
         return ResponseEntity.ok(metodos);
     }
 
-
-
 }
