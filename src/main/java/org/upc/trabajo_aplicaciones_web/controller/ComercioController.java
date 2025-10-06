@@ -16,7 +16,7 @@ import java.util.List;
 public class ComercioController {
 
     private final ComercioService comercioService;
-
+    //David Comercio Controller
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping
     public ResponseEntity<ComercioDTO> crear(@RequestBody ComercioDTO comercioDTO) {
@@ -93,4 +93,5 @@ public class ComercioController {
         List<ComercioDTO> comercios = comercioService.obtenerActivos();
         return ResponseEntity.ok(comercios);
     }
+
 }
