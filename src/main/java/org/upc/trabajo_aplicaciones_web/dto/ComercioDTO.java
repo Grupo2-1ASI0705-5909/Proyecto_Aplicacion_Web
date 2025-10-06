@@ -19,7 +19,6 @@ public class ComercioDTO {
     public ComercioDTO() {}
 
 
-
     //Comentario
     //Comentario 2
 
