@@ -19,6 +19,8 @@ public class ComercioService {
     private final ComercioRepository comercioRepository;
     private final UsuarioRepository usuarioRepository;
 
+    //David ComercioService
+
     public ComercioDTO crear(ComercioDTO comercioDTO) {
         if (comercioRepository.existsByRuc(comercioDTO.getRuc())) {
             throw new RuntimeException("El RUC ya está registrado");
@@ -137,4 +139,5 @@ public class ComercioService {
         dto.setCreatedAt(comercio.getCreatedAt());
         return dto;
     }
+
 }
