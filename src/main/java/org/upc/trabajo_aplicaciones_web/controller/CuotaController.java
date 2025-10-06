@@ -18,6 +18,8 @@ public class CuotaController {
 
     private final CuotaService cuotaService;
 
+    //David Cuota Controller
+
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping
     public ResponseEntity<CuotaDTO> crear(@RequestBody CuotaDTO cuotaDTO) {
@@ -108,4 +110,7 @@ public class CuotaController {
         List<CuotaDTO> cuotas = cuotaService.obtenerPorEstado(estado);
         return ResponseEntity.ok(cuotas);
     }
+
+
+
 }
