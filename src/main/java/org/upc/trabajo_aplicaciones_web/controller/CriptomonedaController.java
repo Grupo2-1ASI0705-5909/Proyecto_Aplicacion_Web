@@ -17,6 +17,8 @@ public class CriptomonedaController {
 
     private final CriptomonedaService criptomonedaService;
 
+    //David Controller Cripto
+
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping
     public ResponseEntity<CriptomonedaDTO> crear(@RequestBody CriptomonedaDTO criptomonedaDTO) {
@@ -79,6 +81,6 @@ public class CriptomonedaController {
         List<CriptomonedaDTO> criptos = criptomonedaService.buscarPorNombre(nombre);
         return ResponseEntity.ok(criptos);
     }
-    //vercion 3/10
+    //vercion 3/11
 
 }
