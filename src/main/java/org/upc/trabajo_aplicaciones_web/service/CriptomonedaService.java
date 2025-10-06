@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 public class CriptomonedaService {
     private final CriptomonedaRepository criptomonedaRepository;
 
+    //David CriptoService
+
     public CriptomonedaDTO crear(CriptomonedaDTO criptomonedaDTO) {
         if (criptomonedaRepository.existsByCodigo(criptomonedaDTO.getCodigo())) {
             throw new RuntimeException("La criptomoneda ya existe");
