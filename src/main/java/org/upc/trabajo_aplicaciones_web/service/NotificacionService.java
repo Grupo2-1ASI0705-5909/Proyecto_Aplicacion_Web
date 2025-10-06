@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import org.upc.trabajo_aplicaciones_web.dto.NotificacionDTO;
+import org.upc.trabajo_aplicaciones_web.dto.UsuarioDTO;
 import org.upc.trabajo_aplicaciones_web.model.Notificacion;
 import org.upc.trabajo_aplicaciones_web.model.Usuario;
 import org.upc.trabajo_aplicaciones_web.repository.NotificacionRepository;
@@ -19,8 +20,6 @@ import java.util.stream.Collectors;
 public class NotificacionService {
     private final NotificacionRepository notificacionRepository;
     private final UsuarioRepository usuarioRepository;
-
-    //David NotificacionService
 
     public NotificacionDTO crear(NotificacionDTO notificacionDTO) {
         Usuario usuario = usuarioRepository.findById(notificacionDTO.getUsuarioId())
@@ -135,6 +134,15 @@ public class NotificacionService {
         dto.setMensaje(notificacion.getMensaje());
         dto.setFechaEnvio(notificacion.getFechaEnvio());
         dto.setLeido(notificacion.getLeido());
+
+        // ✅ Incluir datos básicos del usuario
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setUsuarioId(notificacion.getUsuario().getUsuarioId());
+        usuarioDTO.setNombre(notificacion.getUsuario().getNombre());
+        usuarioDTO.setApellido(notificacion.getUsuario().getApellido());
+        usuarioDTO.setEmail(notificacion.getUsuario().getEmail());
+        dto.setUsuario(usuarioDTO);
+
         return dto;
     }
 }

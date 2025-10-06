@@ -14,7 +14,6 @@ public class PlanPagoDTO {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
 
-    // Para respuestas
     private TransaccionDTO transaccion;
 
     public PlanPagoDTO() {}

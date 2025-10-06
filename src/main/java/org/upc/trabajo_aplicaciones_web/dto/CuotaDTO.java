@@ -14,10 +14,8 @@ public class CuotaDTO {
     private LocalDate fechaPago;
     private String estado = "PENDIENTE";
 
-    // Para respuestas
     private PlanPagoDTO planPago;
 
-    // Campos calculados
     private Boolean vencida = false;
 
     public CuotaDTO() {}

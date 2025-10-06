@@ -3,7 +3,7 @@ package org.upc.trabajo_aplicaciones_web.service;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
-import org.upc.trabajo_aplicaciones_web.dto.TransaccionDTO;
+import org.upc.trabajo_aplicaciones_web.dto.*;
 import org.upc.trabajo_aplicaciones_web.model.*;
 import org.upc.trabajo_aplicaciones_web.repository.*;
 
@@ -14,9 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-//actualizacion
 public class TransaccionService {
-
     private final TransaccionRepository transaccionRepository;
     private final UsuarioRepository usuarioRepository;
     private final ComercioRepository comercioRepository;
@@ -38,6 +36,7 @@ public class TransaccionService {
         transaccion.setUsuario(usuario);
         transaccion.setComercio(comercio);
         transaccion.setMetodoPago(metodoPago);
+        transaccion.setCodigoMoneda(transaccionDTO.getCodigoMoneda());
         transaccion.setMontoTotalFiat(transaccionDTO.getMontoTotalFiat());
         transaccion.setMontoTotalCripto(transaccionDTO.getMontoTotalCripto());
         transaccion.setTasaAplicada(transaccionDTO.getTasaAplicada());
@@ -157,12 +156,14 @@ public class TransaccionService {
         return transaccionDTOs;
     }
 
+    // ✅ MÉTODO DE CONVERSIÓN MEJORADO - Incluye objetos anidados básicos
     private TransaccionDTO convertirATransaccionDTO(Transaccion transaccion) {
         TransaccionDTO dto = new TransaccionDTO();
         dto.setTransaccionId(transaccion.getTransaccionId());
         dto.setUsuarioId(transaccion.getUsuario().getUsuarioId());
         dto.setComercioId(transaccion.getComercio().getComercioId());
         dto.setMetodoPagoId(transaccion.getMetodoPago().getMetodoPagoId());
+        dto.setCodigoMoneda(transaccion.getCodigoMoneda());
         dto.setMontoTotalFiat(transaccion.getMontoTotalFiat());
         dto.setMontoTotalCripto(transaccion.getMontoTotalCripto());
         dto.setTasaAplicada(transaccion.getTasaAplicada());
@@ -170,11 +171,49 @@ public class TransaccionService {
         dto.setEstado(transaccion.getEstado());
         dto.setFechaTransaccion(transaccion.getFechaTransaccion());
 
+        // ✅ Incluir datos básicos del usuario (sin relaciones anidadas)
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setUsuarioId(transaccion.getUsuario().getUsuarioId());
+        usuarioDTO.setNombre(transaccion.getUsuario().getNombre());
+        usuarioDTO.setApellido(transaccion.getUsuario().getApellido());
+        usuarioDTO.setEmail(transaccion.getUsuario().getEmail());
+        dto.setUsuario(usuarioDTO);
+
+        // ✅ Incluir datos básicos del comercio
+        ComercioDTO comercioDTO = new ComercioDTO();
+        comercioDTO.setComercioId(transaccion.getComercio().getComercioId());
+        comercioDTO.setNombreComercial(transaccion.getComercio().getNombreComercial());
+        comercioDTO.setRuc(transaccion.getComercio().getRuc());
+        comercioDTO.setCategoria(transaccion.getComercio().getCategoria());
+        dto.setComercio(comercioDTO);
+
+        MetodoPagoDTO metodoPagoDTO = new MetodoPagoDTO();
+        metodoPagoDTO.setMetodoPagoId(transaccion.getMetodoPago().getMetodoPagoId());
+        metodoPagoDTO.setNombre(transaccion.getMetodoPago().getNombre());
+        metodoPagoDTO.setDescripcion(transaccion.getMetodoPago().getDescripcion());
+        dto.setMetodoPago(metodoPagoDTO);
+
         if (transaccion.getCriptomoneda() != null) {
             dto.setCriptoId(transaccion.getCriptomoneda().getCriptoId());
+
+            CriptomonedaDTO criptoDTO = new CriptomonedaDTO();
+            criptoDTO.setCriptoId(transaccion.getCriptomoneda().getCriptoId());
+            criptoDTO.setCodigo(transaccion.getCriptomoneda().getCodigo());
+            criptoDTO.setNombre(transaccion.getCriptomoneda().getNombre());
+            criptoDTO.setDecimales(transaccion.getCriptomoneda().getDecimales());
+            dto.setCriptomoneda(criptoDTO);
         }
+
         if (transaccion.getTipoCambio() != null) {
             dto.setTipoCambioId(transaccion.getTipoCambio().getTipoCambioId());
+
+            TipoCambioDTO tipoCambioDTO = new TipoCambioDTO();
+            tipoCambioDTO.setTipoCambioId(transaccion.getTipoCambio().getTipoCambioId());
+            tipoCambioDTO.setDesdeCodigo(transaccion.getTipoCambio().getDesdeCodigo());
+            tipoCambioDTO.setHastaCodigo(transaccion.getTipoCambio().getHastaCodigo());
+            tipoCambioDTO.setTasa(transaccion.getTipoCambio().getTasa());
+            tipoCambioDTO.setFechaHora(transaccion.getTipoCambio().getFechaHora());
+            dto.setTipoCambio(tipoCambioDTO);
         }
 
         return dto;

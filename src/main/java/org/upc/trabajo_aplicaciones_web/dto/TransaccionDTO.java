@@ -20,13 +20,11 @@ public class TransaccionDTO {
     private LocalDateTime fechaTransaccion;
     private String estado = "PENDIENTE";
 
-    // Para respuestas
     private UsuarioDTO usuario;
     private ComercioDTO comercio;
     private MetodoPagoDTO metodoPago;
     private CriptomonedaDTO criptomoneda;
     private TipoCambioDTO tipoCambio;
-    private PlanPagoDTO planPago;
 
     public TransaccionDTO() {}
 

@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import org.upc.trabajo_aplicaciones_web.dto.CuotaDTO;
+import org.upc.trabajo_aplicaciones_web.dto.PlanPagoDTO;
 import org.upc.trabajo_aplicaciones_web.model.Cuota;
 import org.upc.trabajo_aplicaciones_web.model.PlanPago;
 import org.upc.trabajo_aplicaciones_web.repository.CuotaRepository;
@@ -19,8 +20,6 @@ import java.util.stream.Collectors;
 public class CuotaService {
     private final CuotaRepository cuotaRepository;
     private final PlanPagoRepository planPagoRepository;
-
-    //David CuotaService
 
     public CuotaDTO crear(CuotaDTO cuotaDTO) {
         PlanPago planPago = planPagoRepository.findById(cuotaDTO.getPlanPagoId())
@@ -150,6 +149,15 @@ public class CuotaService {
         dto.setFechaPago(cuota.getFechaPago());
         dto.setEstado(cuota.getEstado());
         dto.setVencida(cuota.estaVencida());
+
+        PlanPagoDTO planPagoDTO = new PlanPagoDTO();
+        planPagoDTO.setPlanPagoId(cuota.getPlanPago().getPlanPagoId());
+        planPagoDTO.setTransaccionId(cuota.getPlanPago().getTransaccion().getTransaccionId());
+        planPagoDTO.setNumeroCuotas(cuota.getPlanPago().getNumeroCuotas());
+        planPagoDTO.setMontoPorCuota(cuota.getPlanPago().getMontoPorCuota());
+        planPagoDTO.setInteres(cuota.getPlanPago().getInteres());
+        dto.setPlanPago(planPagoDTO);
+
         return dto;
     }
 }

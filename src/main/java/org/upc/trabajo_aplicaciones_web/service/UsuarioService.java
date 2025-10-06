@@ -14,9 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-//actualizacion
 public class UsuarioService {
-
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
 
@@ -33,13 +31,11 @@ public class UsuarioService {
         usuario.setPasswordHash(usuarioDTO.getPasswordHash());
         usuario.setEstado(usuarioDTO.getEstado() != null ? usuarioDTO.getEstado() : true);
 
-        // ✅ Asignar el rol único
         if (usuarioDTO.getRolId() != null) {
             Rol rol = rolRepository.findById(usuarioDTO.getRolId())
                     .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
             usuario.setRol(rol);
         } else {
-            // ✅ Cambio: Buscar rol "USUARIO" en lugar de "USER"
             Rol rolDefault = rolRepository.findByNombre("USUARIO")
                     .orElseThrow(() -> new RuntimeException("Rol USUARIO no encontrado en la base de datos"));
             usuario.setRol(rolDefault);
@@ -79,7 +75,6 @@ public class UsuarioService {
         usuarioExistente.setTelefono(usuarioDTO.getTelefono());
         usuarioExistente.setEstado(usuarioDTO.getEstado());
 
-        // ✅ Actualizar rol si se proporciona
         if (usuarioDTO.getRolId() != null) {
             Rol rol = rolRepository.findById(usuarioDTO.getRolId())
                     .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
@@ -136,8 +131,7 @@ public class UsuarioService {
         return usuarioDTOs;
     }
 
-    // ✅ MÉTODO DE CONVERSIÓN ACTUALIZADO
-    private UsuarioDTO convertirAUsuarioDTO(Usuario usuario) {
+     private UsuarioDTO convertirAUsuarioDTO(Usuario usuario) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setUsuarioId(usuario.getUsuarioId());
         dto.setNombre(usuario.getNombre());
@@ -148,7 +142,6 @@ public class UsuarioService {
         dto.setEstado(usuario.getEstado());
         dto.setCreatedAt(usuario.getCreatedAt());
 
-        // ✅ Convertir el rol único
         if (usuario.getRol() != null) {
             dto.setRolId(usuario.getRol().getRolId());
 

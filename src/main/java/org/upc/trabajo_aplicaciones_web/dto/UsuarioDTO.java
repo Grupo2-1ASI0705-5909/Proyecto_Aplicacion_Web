@@ -16,15 +16,9 @@ public class UsuarioDTO {
     private Boolean estado = true;
     private LocalDateTime createdAt;
 
-    // ✅ Para creación/actualización: Solo el ID del rol
     private Long rolId;
 
-    // ✅ Para respuestas: El objeto rol completo
     private RolDTO rol;
-
-    // Relaciones (sin cambios)
-    private List<ComercioDTO> comercios = new ArrayList<>();
-    private List<WalletDTO> wallets = new ArrayList<>();
 
     public UsuarioDTO() {}
 

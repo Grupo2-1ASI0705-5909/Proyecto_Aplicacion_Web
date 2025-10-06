@@ -3,6 +3,8 @@ package org.upc.trabajo_aplicaciones_web.service;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
+import org.upc.trabajo_aplicaciones_web.dto.CriptomonedaDTO;
+import org.upc.trabajo_aplicaciones_web.dto.UsuarioDTO;
 import org.upc.trabajo_aplicaciones_web.dto.WalletDTO;
 import org.upc.trabajo_aplicaciones_web.model.Criptomoneda;
 import org.upc.trabajo_aplicaciones_web.model.Usuario;
@@ -18,8 +20,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-//actualizacion
 public class WalletService {
+
     private final WalletRepository walletRepository;
     private final UsuarioRepository usuarioRepository;
     private final CriptomonedaRepository criptomonedaRepository;
@@ -144,7 +146,22 @@ public class WalletService {
         dto.setSaldo(wallet.getSaldo());
         dto.setEstado(wallet.getEstado());
         dto.setUltimaActualizacion(wallet.getUltimaActualizacion());
+
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setUsuarioId(wallet.getUsuario().getUsuarioId());
+        usuarioDTO.setNombre(wallet.getUsuario().getNombre());
+        usuarioDTO.setApellido(wallet.getUsuario().getApellido());
+        usuarioDTO.setEmail(wallet.getUsuario().getEmail());
+        dto.setUsuario(usuarioDTO);
+
+        CriptomonedaDTO criptoDTO = new CriptomonedaDTO();
+        criptoDTO.setCriptoId(wallet.getCriptomoneda().getCriptoId());
+        criptoDTO.setCodigo(wallet.getCriptomoneda().getCodigo());
+        criptoDTO.setNombre(wallet.getCriptomoneda().getNombre());
+        criptoDTO.setDecimales(wallet.getCriptomoneda().getDecimales());
+        criptoDTO.setActiva(wallet.getCriptomoneda().getActiva());
+        dto.setCriptomoneda(criptoDTO);
+
         return dto;
     }
-
 }

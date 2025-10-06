@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import org.upc.trabajo_aplicaciones_web.dto.PlanPagoDTO;
+import org.upc.trabajo_aplicaciones_web.dto.TransaccionDTO;
 import org.upc.trabajo_aplicaciones_web.model.PlanPago;
 import org.upc.trabajo_aplicaciones_web.model.Transaccion;
 import org.upc.trabajo_aplicaciones_web.repository.PlanPagoRepository;
@@ -17,7 +18,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PlanPagoService {
-    //actualizado
     private final PlanPagoRepository planPagoRepository;
     private final TransaccionRepository transaccionRepository;
 
@@ -134,6 +134,15 @@ public class PlanPagoService {
         dto.setInteres(planPago.getInteres());
         dto.setFechaInicio(planPago.getFechaInicio());
         dto.setFechaFin(planPago.getFechaFin());
+
+        // ✅ Incluir datos básicos de la transacción (opcional)
+        TransaccionDTO transaccionDTO = new TransaccionDTO();
+        transaccionDTO.setTransaccionId(planPago.getTransaccion().getTransaccionId());
+        transaccionDTO.setMontoTotalFiat(planPago.getTransaccion().getMontoTotalFiat());
+        transaccionDTO.setEstado(planPago.getTransaccion().getEstado());
+        transaccionDTO.setFechaTransaccion(planPago.getTransaccion().getFechaTransaccion());
+        dto.setTransaccion(transaccionDTO);
+
         return dto;
     }
 }

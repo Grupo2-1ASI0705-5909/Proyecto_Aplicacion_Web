@@ -14,7 +14,6 @@ public class WalletDTO {
     private Boolean estado = true;
     private LocalDateTime ultimaActualizacion;
 
-    // Para respuestas
     private UsuarioDTO usuario;
     private CriptomonedaDTO criptomoneda;
 
