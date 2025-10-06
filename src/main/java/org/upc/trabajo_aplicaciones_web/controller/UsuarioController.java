@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class UsuarioController {
-
+    //actualizacion
     private final UsuarioService usuarioService;
 
     @PreAuthorize("permitAll()")
