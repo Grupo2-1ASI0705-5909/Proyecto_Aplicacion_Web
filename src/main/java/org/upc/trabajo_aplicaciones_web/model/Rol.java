@@ -15,7 +15,7 @@ public class Rol {
     private Long rolId;
 
     @Column(nullable = false, unique = true, length = 50)
-    private String nombre; // Ejemplo: "ADMIN", "USER", "COMERCIANTE"
+    private String nombre; // Ejemplo: "ADMINISTRADOR", "USUARIO", "COMERCIO"
 
     @Column(nullable = false, length = 200)
     private String descripcion;

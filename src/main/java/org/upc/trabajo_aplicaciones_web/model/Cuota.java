@@ -33,7 +33,6 @@ public class Cuota {
     @Column(nullable = false, length = 20)
     private String estado = "PENDIENTE";
 
-    // MÉTODO PARA VALIDAR SI ESTÁ VENCIDA
     public boolean estaVencida() {
         return LocalDate.now().isAfter(fechaVencimiento) && !"PAGADA".equals(estado);
     }

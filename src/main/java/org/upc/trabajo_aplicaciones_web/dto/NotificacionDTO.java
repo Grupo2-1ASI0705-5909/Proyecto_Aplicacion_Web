@@ -12,7 +12,6 @@ public class NotificacionDTO {
     private LocalDateTime fechaEnvio;
     private Boolean leido = false;
 
-    // Para respuestas
     private UsuarioDTO usuario;
 
     public NotificacionDTO() {}

@@ -18,7 +18,6 @@ public class UsuarioController {
     //actualizacion
     private final UsuarioService usuarioService;
 
-    @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<UsuarioDTO> crear(@RequestBody UsuarioDTO usuarioDTO) {
         UsuarioDTO nuevoUsuario = usuarioService.crear(usuarioDTO);

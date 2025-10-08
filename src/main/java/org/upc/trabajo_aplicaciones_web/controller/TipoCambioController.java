@@ -51,28 +51,28 @@ public class TipoCambioController {
         return ResponseEntity.ok(tiposCambio);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping
     public ResponseEntity<List<TipoCambioDTO>> obtenerTodos() {
         List<TipoCambioDTO> tiposCambio = tipoCambioService.obtenerTodos();
         return ResponseEntity.ok(tiposCambio);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/{id}")
     public ResponseEntity<TipoCambioDTO> obtenerPorId(@PathVariable Long id) {
         TipoCambioDTO tipoCambio = tipoCambioService.obtenerPorId(id);
         return ResponseEntity.ok(tipoCambio);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/tasa-actual")
     public ResponseEntity<TipoCambioDTO> obtenerTasaMasReciente(@RequestParam String desde, @RequestParam String hasta) {
         TipoCambioDTO tipoCambio = tipoCambioService.obtenerTasaMasReciente(desde, hasta);
         return ResponseEntity.ok(tipoCambio);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/tasas-recientes")
     public ResponseEntity<List<TipoCambioDTO>> obtenerTasasMasRecientes() {
         List<TipoCambioDTO> tiposCambio = tipoCambioService.obtenerTasasMasRecientes();

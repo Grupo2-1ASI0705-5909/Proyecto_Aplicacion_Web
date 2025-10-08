@@ -95,14 +95,14 @@ public class TransaccionController {
         return ResponseEntity.ok(transaccion);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/{id}")
     public ResponseEntity<TransaccionDTO> obtenerPorId(@PathVariable Long id) {
         TransaccionDTO transaccion = transaccionService.obtenerPorId(id);
         return ResponseEntity.ok(transaccion);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/estado/{estado}")
     public ResponseEntity<List<TransaccionDTO>> obtenerPorEstado(@PathVariable String estado) {
         List<TransaccionDTO> transacciones = transaccionService.obtenerPorEstado(estado);

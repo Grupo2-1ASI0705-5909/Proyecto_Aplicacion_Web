@@ -33,6 +33,5 @@ public class Wallet {
 
     @Column(nullable = false, name = "ultimaactualizacion")
     private LocalDateTime ultimaActualizacion = LocalDateTime.now();
-    //vercion 3/10
 
 }

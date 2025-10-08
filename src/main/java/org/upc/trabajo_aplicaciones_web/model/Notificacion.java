@@ -29,7 +29,6 @@ public class Notificacion {
     @Column(nullable = false)
     private Boolean leido = false;
 
-    // MÉTODO PARA MARCAR COMO LEÍDO
     public void marcarComoLeido() {
         this.leido = true;
     }

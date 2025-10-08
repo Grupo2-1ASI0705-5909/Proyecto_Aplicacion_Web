@@ -52,42 +52,42 @@ public class ComercioController {
         return ResponseEntity.ok(comercios);
     }
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping
     public ResponseEntity<List<ComercioDTO>> obtenerTodos() {
         List<ComercioDTO> comercios = comercioService.obtenerTodos();
         return ResponseEntity.ok(comercios);
     }
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/{id}")
     public ResponseEntity<ComercioDTO> obtenerPorId(@PathVariable Long id) {
         ComercioDTO comercio = comercioService.obtenerPorId(id);
         return ResponseEntity.ok(comercio);
     }
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/ruc/{ruc}")
     public ResponseEntity<ComercioDTO> obtenerPorRuc(@PathVariable String ruc) {
         ComercioDTO comercio = comercioService.obtenerPorRuc(ruc);
         return ResponseEntity.ok(comercio);
     }
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/categoria/{categoria}")
     public ResponseEntity<List<ComercioDTO>> obtenerPorCategoria(@PathVariable String categoria) {
         List<ComercioDTO> comercios = comercioService.obtenerPorCategoria(categoria);
         return ResponseEntity.ok(comercios);
     }
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/buscar")
     public ResponseEntity<List<ComercioDTO>> buscarPorNombre(@RequestParam String nombre) {
         List<ComercioDTO> comercios = comercioService.buscarPorNombre(nombre);
         return ResponseEntity.ok(comercios);
     }
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/activos")
     public ResponseEntity<List<ComercioDTO>> obtenerActivos() {
         List<ComercioDTO> comercios = comercioService.obtenerActivos();

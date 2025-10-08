@@ -75,21 +75,21 @@ public class PlanPagoController {
         return ResponseEntity.ok(planes);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping
     public ResponseEntity<List<PlanPagoDTO>> obtenerTodos() {
         List<PlanPagoDTO> planes = planPagoService.obtenerTodos();
         return ResponseEntity.ok(planes);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/{id}")
     public ResponseEntity<PlanPagoDTO> obtenerPorId(@PathVariable Long id) {
         PlanPagoDTO plan = planPagoService.obtenerPorId(id);
         return ResponseEntity.ok(plan);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/activos")
     public ResponseEntity<List<PlanPagoDTO>> obtenerPlanesActivos() {
         List<PlanPagoDTO> planes = planPagoService.obtenerPlanesActivos();

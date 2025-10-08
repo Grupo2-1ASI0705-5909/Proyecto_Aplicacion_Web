@@ -90,21 +90,21 @@ public class CuotaController {
         return ResponseEntity.ok(cuotas);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping
     public ResponseEntity<List<CuotaDTO>> obtenerTodos() {
         List<CuotaDTO> cuotas = cuotaService.obtenerTodos();
         return ResponseEntity.ok(cuotas);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/{id}")
     public ResponseEntity<CuotaDTO> obtenerPorId(@PathVariable Long id) {
         CuotaDTO cuota = cuotaService.obtenerPorId(id);
         return ResponseEntity.ok(cuota);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/estado/{estado}")
     public ResponseEntity<List<CuotaDTO>> obtenerPorEstado(@PathVariable String estado) {
         List<CuotaDTO> cuotas = cuotaService.obtenerPorEstado(estado);

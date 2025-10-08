@@ -36,12 +36,10 @@ public class Usuario {
     @Column(nullable = false, name = "createdat")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // ✅ RELACIÓN MANY-TO-ONE: Muchos usuarios tienen un rol
     @ManyToOne(fetch = FetchType.EAGER) // EAGER para cargar el rol automáticamente con el usuario
-    @JoinColumn(name = "rolid", nullable = false) // Columna FK en la tabla usuarios
+    @JoinColumn(name = "rolid", nullable = false)
     private Rol rol;
 
-    // RELACIONES ONE TO MANY (sin cambios)
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comercio> comercios = new ArrayList<>();
 

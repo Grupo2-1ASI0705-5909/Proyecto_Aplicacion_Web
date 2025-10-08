@@ -47,35 +47,35 @@ public class CriptomonedaController {
         return ResponseEntity.ok(cripto);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping
     public ResponseEntity<List<CriptomonedaDTO>> obtenerTodos() {
         List<CriptomonedaDTO> criptos = criptomonedaService.obtenerTodos();
         return ResponseEntity.ok(criptos);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/{id}")
     public ResponseEntity<CriptomonedaDTO> obtenerPorId(@PathVariable Long id) {
         CriptomonedaDTO cripto = criptomonedaService.obtenerPorId(id);
         return ResponseEntity.ok(cripto);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/codigo/{codigo}")
     public ResponseEntity<CriptomonedaDTO> obtenerPorCodigo(@PathVariable String codigo) {
         CriptomonedaDTO cripto = criptomonedaService.obtenerPorCodigo(codigo);
         return ResponseEntity.ok(cripto);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/activas")
     public ResponseEntity<List<CriptomonedaDTO>> obtenerActivas() {
         List<CriptomonedaDTO> criptos = criptomonedaService.obtenerActivas();
         return ResponseEntity.ok(criptos);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/buscar")
     public ResponseEntity<List<CriptomonedaDTO>> buscarPorNombre(@RequestParam String nombre) {
         List<CriptomonedaDTO> criptos = criptomonedaService.buscarPorNombre(nombre);

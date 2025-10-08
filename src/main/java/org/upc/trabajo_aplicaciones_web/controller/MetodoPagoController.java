@@ -54,21 +54,21 @@ public class MetodoPagoController {
         return ResponseEntity.ok(cantidad);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping
     public ResponseEntity<List<MetodoPagoDTO>> obtenerTodos() {
         List<MetodoPagoDTO> metodos = metodoPagoService.obtenerTodos();
         return ResponseEntity.ok(metodos);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/{id}")
     public ResponseEntity<MetodoPagoDTO> obtenerPorId(@PathVariable Long id) {
         MetodoPagoDTO metodo = metodoPagoService.obtenerPorId(id);
         return ResponseEntity.ok(metodo);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/activos")
     public ResponseEntity<List<MetodoPagoDTO>> obtenerActivos() {
         List<MetodoPagoDTO> metodos = metodoPagoService.obtenerActivos();
